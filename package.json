@@ -1,16 +1,13 @@
 {
   "name": "work-hours-system",
   "version": "1.0.0",
-  "private": true,
+  "description": "سیستم ثبت ساعت کاری، حقوق و کسورات رانندگان",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "engines": {
-    "node": ">=18"
-  },
   "dependencies": {
-    "express": "latest",
-    "better-sqlite3": "latest"
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.19.2"
   }
 }
