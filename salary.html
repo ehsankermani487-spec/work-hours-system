@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>محاسبه حقوق ماهانه</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .header {
+            background: white;
+            padding: 18px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            font-family: Tahoma, Arial, sans-serif;
+            cursor: pointer;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .back {
+            background: #475569;
+        }
+
+        .logout {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 15px;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.06);
+            margin-bottom: 20px;
+        }
+
+        .box h2 {
+            margin-top: 0;
+        }
+
+        .search {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .field {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        .calculate {
+            background: #2563eb;
+            color: white;
+            border: none;
+
+            padding: 12px 25px;
+            border-radius: 8px;
+        }
+
+        .calculate:hover {
+            background: #1d4ed8;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th,
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #f8fafc;
+            white-space: nowrap;
+        }
+
+        .money {
+            white-space: nowrap;
+        }
+
+        .final {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .payslip {
+            background: #16a34a;
+            color: white;
+            border: none;
+
+            padding: 8px 14px;
+            border-radius: 7px;
+        }
+
+        .payslip:hover {
+            background: #15803d;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .success {
+            color: #15803d;
+        }
+
+        @media(max-width:700px) {
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .search {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .field {
+                min-width: 100%;
+            }
+
+            .calculate {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <h1>
+        💰 محاسبه حقوق ماهانه
+    </h1>
+
+
+    <div class="buttons">
+
+        <button
+            class="btn back"
+            onclick="location.href='index.html'"
+        >
+            ← داشبورد
+        </button>
+
+
+        <button
+            class="btn logout"
+            onclick="logout()"
+        >
+            🚪 خروج
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="box">
+
+        <h2>
+            انتخاب ماه
+        </h2>
+
+
+        <div class="search">
+
+
+            <div class="field">
+
+                <label>
+                    ماه
+                </label>
+
+                <input
+                    type="text"
+                    id="month"
+                    placeholder="مثلاً 1405-05"
+                    pattern="[0-9]{4}-[0-9]{2}"
+                >
+
+            </div>
+
+
+            <button
+                class="calculate"
+                onclick="calculateSalary()"
+            >
+                🔍 محاسبه حقوق
+            </button>
+
+
+        </div>
+
+
+        <p id="message"></p>
+
+    </div>
+
+
+
+    <div class="box">
+
+        <h2>
+            نتیجه حقوق کارکنان
+        </h2>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            #
+                        </th>
+
+                        <th>
+                            نام کارمند
+                        </th>
+
+                        <th>
+                            ساعات کار
+                        </th>
+
+                        <th>
+                            حقوق ساعتی
+                        </th>
+
+                        <th>
+                            حقوق پایه
+                        </th>
+
+                        <th>
+                            کسورات
+                        </th>
+
+                        <th>
+                            حقوق نهایی
+                        </th>
+
+                        <th>
+                            فیش
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="salaryTable">
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="empty"
+                        >
+                            ابتدا ماه را انتخاب و روی «محاسبه حقوق» بزنید.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+// =====================================================
+// فرمت مبلغ
+// =====================================================
+
+function formatMoney(number) {
+
+    return Number(
+        number || 0
+    ).toLocaleString("fa-IR");
+
+}
+
+
+
+// =====================================================
+// محاسبه حقوق
+// =====================================================
+
+async function calculateSalary() {
+
+
+    const month =
+        document
+            .getElementById("month")
+            .value
+            .trim();
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    const table =
+        document.getElementById(
+            "salaryTable"
+        );
+
+
+    if (!month) {
+
+        message.textContent =
+            "لطفاً ماه را وارد کنید.";
+
+        message.className =
+            "error";
+
+        return;
+    }
+
+
+    if (!/^\d{4}-\d{2}$/.test(month)) {
+
+        message.textContent =
+            "فرمت ماه باید مانند 1405-05 باشد.";
+
+        message.className =
+            "error";
+
+        return;
+    }
+
+
+    message.textContent =
+        "در حال محاسبه...";
+
+    message.className =
+        "";
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                `/api/salary?month=${encodeURIComponent(month)}`
+            );
+
+
+        if (!response.ok) {
+
+            const error =
+                await response.json();
+
+            throw new Error(
+                error.message ||
+                "خطا در دریافت اطلاعات"
+            );
+
+        }
+
+
+        const salaries =
+            await response.json();
+
+
+        table.innerHTML = "";
+
+
+        if (
+            !Array.isArray(salaries) ||
+            salaries.length === 0
+        ) {
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="8"
+                        class="empty"
+                    >
+                        هیچ کارمندی ثبت نشده است.
+                    </td>
+
+                </tr>
+
+            `;
+
+            message.textContent =
+                "اطلاعاتی برای نمایش وجود ندارد.";
+
+            return;
+        }
+
+
+        salaries.forEach(
+            (employee, index) => {
+
+
+                table.innerHTML += `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(employee.name)}
+                        </td>
+
+
+                        <td>
+                            ${employee.total_hours}
+                        </td>
+
+
+                        <td class="money">
+                            ${formatMoney(employee.hourly_rate)}
+                        </td>
+
+
+                        <td class="money">
+                            ${formatMoney(employee.base_salary)}
+                        </td>
+
+
+                        <td class="money">
+                            ${formatMoney(employee.deductions)}
+                        </td>
+
+
+                        <td class="money final">
+                            ${formatMoney(employee.final_salary)}
+                        </td>
+
+
+                        <td>
+
+                            <button
+                                class="payslip"
+                                onclick="openPayslip('${escapeAttribute(employee.name)}')"
+                            >
+                                🧾 فیش
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+        message.textContent =
+            `حقوق ماه ${month} با موفقیت محاسبه شد.`;
+
+        message.className =
+            "success";
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="8"
+                    class="empty"
+                >
+                    خطا در دریافت اطلاعات.
+                </td>
+
+            </tr>
+
+        `;
+
+
+        message.textContent =
+            error.message ||
+            "خطا در ارتباط با سرور.";
+
+        message.className =
+            "error";
+
+    }
+
+}
+
+
+
+// =====================================================
+// باز کردن فیش
+// =====================================================
+
+function openPayslip(name) {
+
+
+    const month =
+        document
+            .getElementById("month")
+            .value
+            .trim();
+
+
+    if (!month) {
+
+        alert(
+            "ابتدا ماه را انتخاب کنید."
+        );
+
+        return;
+    }
+
+
+    window.location.href =
+        `payslip.html?employee=${encodeURIComponent(name)}&month=${encodeURIComponent(month)}`;
+
+}
+
+
+
+// =====================================================
+// جلوگیری از HTML Injection
+// =====================================================
+
+function escapeHtml(text) {
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+function escapeAttribute(text) {
+
+    return String(text)
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'");
+
+}
+
+
+
+// =====================================================
+// خروج
+// =====================================================
+
+async function logout() {
+
+    try {
+
+        await fetch(
+            "/api/logout",
+            {
+                method: "POST"
+            }
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+
+    window.location.href =
+        "/login.html";
+
+}
+
+
+
+// =====================================================
+// اجرای اولیه
+// =====================================================
+
+document
+    .getElementById("month")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                calculateSalary();
+
+            }
+
+        }
+    );
+
+
+</script>
+
+
+</body>
+
+</html>

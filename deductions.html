@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت کسورات</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .header {
+            background: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            font-family: Tahoma, Arial, sans-serif;
+            cursor: pointer;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .back {
+            background: #475569;
+        }
+
+        .logout {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.06);
+        }
+
+        .box h2 {
+            margin-top: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: Tahoma;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .submit {
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        .amount {
+            font-weight: bold;
+        }
+
+        .empty {
+            padding: 25px;
+            color: #64748b;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        @media(max-width:600px) {
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .container {
+                padding: 10px;
+                margin: 15px auto;
+            }
+
+            .box {
+                padding: 15px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th,
+            td {
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <h1>📋 مدیریت کسورات</h1>
+
+    <div class="buttons">
+
+        <button
+            class="btn back"
+            onclick="location.href='index.html'"
+        >
+            ← داشبورد
+        </button>
+
+        <button
+            class="btn logout"
+            onclick="logout()"
+        >
+            🚪 خروج
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="box">
+
+        <h2>➕ ثبت کسری جدید</h2>
+
+        <form id="deductionForm">
+
+            <div class="form-grid">
+
+                <div>
+
+                    <label>
+                        کارمند
+                    </label>
+
+                    <select
+                        id="employeeName"
+                        required
+                    >
+
+                        <option value="">
+                            انتخاب کارمند
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        تاریخ کسری
+                    </label>
+
+                    <input
+                        type="text"
+                        id="deductionDate"
+                        placeholder="1405-05-06"
+                        pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                        required
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        نوع کسری
+                    </label>
+
+                    <select
+                        id="deductionType"
+                        required
+                    >
+
+                        <option value="">
+                            انتخاب نوع کسری
+                        </option>
+
+                        <option value="غیبت">
+                            غیبت
+                        </option>
+
+                        <option value="وام">
+                            وام
+                        </option>
+
+                        <option value="جریمه">
+                            جریمه
+                        </option>
+
+                        <option value="بیمه">
+                            بیمه
+                        </option>
+
+                        <option value="مالیات">
+                            مالیات
+                        </option>
+
+                        <option value="سایر">
+                            سایر
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        مبلغ کسری
+                    </label>
+
+                    <input
+                        type="number"
+                        id="amount"
+                        min="1"
+                        placeholder="مبلغ به ریال"
+                        required
+                    >
+
+                </div>
+
+
+                <div style="grid-column:1/-1;">
+
+                    <label>
+                        توضیحات
+                    </label>
+
+                    <textarea
+                        id="description"
+                        placeholder="توضیحات اختیاری"
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="submit"
+            >
+                ثبت کسری
+            </button>
+
+
+            <p id="message"></p>
+
+        </form>
+
+    </div>
+
+
+    <div class="box">
+
+        <h2>📋 لیست کسورات</h2>
+
+        <div style="overflow-x:auto;">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ردیف
+                        </th>
+
+                        <th>
+                            کارمند
+                        </th>
+
+                        <th>
+                            تاریخ
+                        </th>
+
+                        <th>
+                            نوع کسری
+                        </th>
+
+                        <th>
+                            مبلغ
+                        </th>
+
+                        <th>
+                            توضیحات
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="deductionsTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+// =====================================================
+// دریافت کارکنان
+// =====================================================
+
+async function loadEmployees() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/employees",
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+
+        if (response.status === 401) {
+
+            location.href =
+                "/login.html";
+
+            return;
+        }
+
+
+        const employees =
+            await response.json();
+
+
+        const select =
+            document.getElementById(
+                "employeeName"
+            );
+
+
+        select.innerHTML = `
+            <option value="">
+                انتخاب کارمند
+            </option>
+        `;
+
+
+        employees.forEach(employee => {
+
+            const option =
+                document.createElement("option");
+
+
+            option.value =
+                employee.name;
+
+
+            option.textContent =
+                employee.personnel_number
+                    ? `${employee.name} - ${employee.personnel_number}`
+                    : employee.name;
+
+
+            select.appendChild(option);
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+}
+
+
+// =====================================================
+// ثبت کسری
+// =====================================================
+
+document
+    .getElementById("deductionForm")
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const employee_name =
+                document.getElementById(
+                    "employeeName"
+                ).value;
+
+
+            const deduction_date =
+                document.getElementById(
+                    "deductionDate"
+                ).value;
+
+
+            const deduction_type =
+                document.getElementById(
+                    "deductionType"
+                ).value;
+
+
+            const amount =
+                Number(
+                    document.getElementById(
+                        "amount"
+                    ).value
+                );
+
+
+            const description =
+                document.getElementById(
+                    "description"
+                ).value.trim();
+
+
+            if (
+                !employee_name ||
+                !deduction_date ||
+                !deduction_type ||
+                !amount
+            ) {
+
+                showMessage(
+                    "لطفاً تمام اطلاعات ضروری را وارد کنید."
+                );
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/deductions",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            credentials:
+                                "same-origin",
+
+                            body:
+                                JSON.stringify({
+
+                                    employee_name,
+
+                                    deduction_date,
+
+                                    deduction_type,
+
+                                    amount,
+
+                                    description
+
+                                })
+                        }
+                    );
+
+
+                if (response.status === 401) {
+
+                    location.href =
+                        "/login.html";
+
+                    return;
+                }
+
+
+                const result =
+                    await response.json();
+
+
+                showMessage(
+                    result.message ||
+                    "عملیات انجام شد."
+                );
+
+
+                if (response.ok) {
+
+                    document
+                        .getElementById(
+                            "deductionForm"
+                        )
+                        .reset();
+
+
+                    loadDeductions();
+
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                showMessage(
+                    "خطا در ارتباط با سرور."
+                );
+            }
+
+        }
+    );
+
+
+// =====================================================
+// دریافت کسورات
+// =====================================================
+
+async function loadDeductions() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/deductions",
+                {
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        if (response.status === 401) {
+
+            location.href =
+                "/login.html";
+
+            return;
+        }
+
+
+        const deductions =
+            await response.json();
+
+
+        const table =
+            document.getElementById(
+                "deductionsTable"
+            );
+
+
+        table.innerHTML = "";
+
+
+        if (
+            !Array.isArray(deductions) ||
+            deductions.length === 0
+        ) {
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="empty"
+                    >
+                        هنوز کسری ثبت نشده است.
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+        }
+
+
+        deductions.forEach(
+            (item, index) => {
+
+                const amount =
+                    Number(
+                        item.amount || 0
+                    ).toLocaleString(
+                        "fa-IR"
+                    );
+
+
+                table.innerHTML += `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                item.employee_name
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                item.deduction_date
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                item.deduction_type
+                            )}
+                        </td>
+
+                        <td class="amount">
+                            ${amount}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                item.description || "-"
+                            )}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "deductionsTable"
+        ).innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="empty"
+                >
+                    خطا در دریافت کسورات.
+                </td>
+
+            </tr>
+
+        `;
+    }
+}
+
+
+// =====================================================
+// پیام
+// =====================================================
+
+function showMessage(message) {
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        message;
+}
+
+
+// =====================================================
+// جلوگیری از HTML ناخواسته
+// =====================================================
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+// =====================================================
+// خروج
+// =====================================================
+
+async function logout() {
+
+    try {
+
+        await fetch(
+            "/api/logout",
+            {
+                method: "POST",
+                credentials: "same-origin"
+            }
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+    location.href =
+        "/login.html";
+}
+
+
+// =====================================================
+// شروع
+// =====================================================
+
+loadEmployees();
+
+loadDeductions();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>فیش حقوقی</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            background: #f1f5f9;
+
+            font-family:
+                Tahoma,
+                Arial,
+                sans-serif;
+
+            color: #1e293b;
+
+        }
+
+
+        .topbar {
+
+            background: white;
+
+            padding: 15px 25px;
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            box-shadow:
+                0 2px 10px
+                rgba(0,0,0,.08);
+
+        }
+
+
+        .topbar h1 {
+
+            margin: 0;
+
+            font-size: 21px;
+
+        }
+
+
+        .buttons {
+
+            display: flex;
+
+            gap: 10px;
+
+        }
+
+
+        button {
+
+            border: none;
+
+            border-radius: 8px;
+
+            padding: 10px 18px;
+
+            cursor: pointer;
+
+            font-family:
+                Tahoma,
+                Arial,
+                sans-serif;
+
+        }
+
+
+        .back {
+
+            background: #475569;
+
+            color: white;
+
+        }
+
+
+        .print {
+
+            background: #2563eb;
+
+            color: white;
+
+        }
+
+
+        .logout {
+
+            background: #dc2626;
+
+            color: white;
+
+        }
+
+
+        .container {
+
+            max-width: 850px;
+
+            margin: 30px auto;
+
+            padding: 15px;
+
+        }
+
+
+        .payslip {
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 3px 20px
+                rgba(0,0,0,.08);
+
+        }
+
+
+        .company {
+
+            text-align: center;
+
+            border-bottom:
+                2px solid #1e293b;
+
+            padding-bottom: 20px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .company h2 {
+
+            margin: 0 0 10px;
+
+            font-size: 25px;
+
+        }
+
+
+        .company p {
+
+            margin: 5px;
+
+            color: #64748b;
+
+        }
+
+
+        .title {
+
+            text-align: center;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .title h3 {
+
+            margin: 0;
+
+            font-size: 22px;
+
+        }
+
+
+        .info {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 12px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .info-item {
+
+            border:
+                1px solid #e2e8f0;
+
+            padding: 13px;
+
+            border-radius: 8px;
+
+            background: #f8fafc;
+
+        }
+
+
+        .info-item strong {
+
+            display: inline-block;
+
+            margin-left: 8px;
+
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse:
+                collapse;
+
+            margin-top: 15px;
+
+        }
+
+
+        th,
+        td {
+
+            border:
+                1px solid #cbd5e1;
+
+            padding: 13px;
+
+            text-align: right;
+
+        }
+
+
+        th {
+
+            background: #f8fafc;
+
+            width: 55%;
+
+        }
+
+
+        .final-row th,
+        .final-row td {
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            background: #e2e8f0;
+
+        }
+
+
+        .footer {
+
+            margin-top: 35px;
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            padding-top: 20px;
+
+            border-top:
+                1px solid #cbd5e1;
+
+        }
+
+
+        .signature {
+
+            text-align: center;
+
+            min-width: 180px;
+
+        }
+
+
+        .signature-space {
+
+            height: 55px;
+
+        }
+
+
+        .loading {
+
+            text-align: center;
+
+            padding: 50px;
+
+            color: #64748b;
+
+        }
+
+
+        .error {
+
+            text-align: center;
+
+            color: #dc2626;
+
+            padding: 40px;
+
+            font-weight: bold;
+
+        }
+
+
+        @media(max-width:650px) {
+
+            .topbar {
+
+                flex-direction:
+                    column;
+
+                gap: 12px;
+
+            }
+
+
+            .container {
+
+                margin: 10px auto;
+
+            }
+
+
+            .payslip {
+
+                padding: 20px;
+
+            }
+
+
+            .info {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .footer {
+
+                flex-direction:
+                    column;
+
+                gap: 30px;
+
+            }
+
+        }
+
+
+        @media print {
+
+            body {
+
+                background: white;
+
+            }
+
+
+            .topbar {
+
+                display: none;
+
+            }
+
+
+            .container {
+
+                margin: 0;
+
+                max-width: none;
+
+                padding: 0;
+
+            }
+
+
+            .payslip {
+
+                box-shadow: none;
+
+                border-radius: 0;
+
+                padding: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="topbar">
+
+
+    <h1>
+        🧾 فیش حقوقی
+    </h1>
+
+
+    <div class="buttons">
+
+
+        <button
+            class="back"
+            onclick="goBack()"
+        >
+            ← بازگشت
+        </button>
+
+
+        <button
+            class="print"
+            onclick="window.print()"
+        >
+            🖨️ چاپ فیش
+        </button>
+
+
+        <button
+            class="logout"
+            onclick="logout()"
+        >
+            🚪 خروج
+        </button>
+
+
+    </div>
+
+</div>
+
+
+
+<div class="container">
+
+
+    <div
+        id="loading"
+        class="loading"
+    >
+
+        در حال دریافت اطلاعات فیش...
+
+    </div>
+
+
+
+    <div
+        id="error"
+        class="error"
+        style="display:none"
+    >
+
+    </div>
+
+
+
+    <div
+        id="payslip"
+        class="payslip"
+        style="display:none"
+    >
+
+
+        <!-- اطلاعات شرکت -->
+
+        <div class="company">
+
+            <h2 id="companyName">
+                شرکت
+            </h2>
+
+            <p>
+                فیش حقوقی ماهانه
+            </p>
+
+            <p id="managerName"></p>
+
+        </div>
+
+
+
+        <!-- عنوان -->
+
+        <div class="title">
+
+            <h3>
+                فیش حقوقی
+            </h3>
+
+        </div>
+
+
+
+        <!-- اطلاعات کارمند -->
+
+        <div class="info">
+
+
+            <div class="info-item">
+
+                <strong>
+                    نام کارمند:
+                </strong>
+
+                <span id="employeeName">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <strong>
+                    ماه:
+                </strong>
+
+                <span id="month">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <strong>
+                    شماره پرسنلی:
+                </strong>
+
+                <span id="personnelNumber">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <strong>
+                    حقوق ساعتی:
+                </strong>
+
+                <span id="hourlyRate">
+                    -
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- جدول حقوق -->
+
+        <table>
+
+
+            <tbody>
+
+
+                <tr>
+
+                    <th>
+                        مجموع ساعات کار
+                    </th>
+
+                    <td id="totalHours">
+                        -
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <th>
+                        حقوق پایه
+                    </th>
+
+                    <td id="baseSalary">
+                        -
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <th>
+                        مجموع حقوق قبل از کسورات
+                    </th>
+
+                    <td id="grossSalary">
+                        -
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <th>
+                        کسورات
+                    </th>
+
+                    <td id="deductions">
+                        -
+                    </td>
+
+                </tr>
+
+
+                <tr class="final-row">
+
+                    <th>
+                        حقوق نهایی قابل پرداخت
+                    </th>
+
+                    <td id="finalSalary">
+                        -
+                    </td>
+
+                </tr>
+
+
+            </tbody>
+
+        </table>
+
+
+
+        <!-- امضا -->
+
+        <div class="footer">
+
+
+            <div class="signature">
+
+                <strong>
+                    امضای کارمند
+                </strong>
+
+                <div class="signature-space"></div>
+
+                <span>
+                    ........................
+                </span>
+
+            </div>
+
+
+            <div class="signature">
+
+                <strong>
+                    امضای مدیر
+                </strong>
+
+                <div class="signature-space"></div>
+
+                <span>
+                    ........................
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+// =====================================================
+// ابزارها
+// =====================================================
+
+
+function formatMoney(value) {
+
+    return Number(
+        value || 0
+    ).toLocaleString("fa-IR");
+
+}
+
+
+
+function getParams() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    return {
+
+        employee:
+            params.get("employee"),
+
+        month:
+            params.get("month")
+
+    };
+
+}
+
+
+
+// =====================================================
+// دریافت اطلاعات شرکت
+// =====================================================
+
+
+async function loadCompany() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/company"
+            );
+
+
+        if (!response.ok) {
+
+            return;
+
+        }
+
+
+        const company =
+            await response.json();
+
+
+        if (
+            company &&
+            company.company_name
+        ) {
+
+            document
+                .getElementById(
+                    "companyName"
+                )
+                .textContent =
+                company.company_name;
+
+        }
+
+
+        if (
+            company &&
+            company.manager_name
+        ) {
+
+            document
+                .getElementById(
+                    "managerName"
+                )
+                .textContent =
+                `مدیر: ${company.manager_name}`;
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+
+// =====================================================
+// دریافت شماره پرسنلی
+// =====================================================
+
+
+async function loadPersonnelNumber(
+    employee
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/employees"
+            );
+
+
+        if (!response.ok) {
+
+            return;
+
+        }
+
+
+        const employees =
+            await response.json();
+
+
+        const person =
+            employees.find(
+                item =>
+                    item.name === employee
+            );
+
+
+        if (person) {
+
+            document
+                .getElementById(
+                    "personnelNumber"
+                )
+                .textContent =
+                person.personnel_number ||
+                "-";
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+
+// =====================================================
+// دریافت فیش
+// =====================================================
+
+
+async function loadPayslip() {
+
+
+    const {
+        employee,
+        month
+    } = getParams();
+
+
+    const loading =
+        document.getElementById(
+            "loading"
+        );
+
+
+    const errorBox =
+        document.getElementById(
+            "error"
+        );
+
+
+    const payslip =
+        document.getElementById(
+            "payslip"
+        );
+
+
+    if (!employee || !month) {
+
+        loading.style.display =
+            "none";
+
+        errorBox.style.display =
+            "block";
+
+        errorBox.textContent =
+            "نام کارمند یا ماه مشخص نشده است.";
+
+        return;
+
+    }
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                `/api/payslip?employee=${encodeURIComponent(employee)}&month=${encodeURIComponent(month)}`
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                "خطا در دریافت فیش"
+            );
+
+        }
+
+
+
+        // -----------------------------------------
+        // اطلاعات اصلی
+        // -----------------------------------------
+
+
+        document
+            .getElementById(
+                "employeeName"
+            )
+            .textContent =
+            result.name;
+
+
+        document
+            .getElementById(
+                "month"
+            )
+            .textContent =
+            month;
+
+
+        document
+            .getElementById(
+                "hourlyRate"
+            )
+            .textContent =
+            `${formatMoney(result.hourly_rate)} تومان`;
+
+
+
+        // -----------------------------------------
+        // ساعات
+        // -----------------------------------------
+
+
+        document
+            .getElementById(
+                "totalHours"
+            )
+            .textContent =
+            `${result.total_hours} ساعت`;
+
+
+
+        // -----------------------------------------
+        // حقوق
+        // -----------------------------------------
+
+
+        document
+            .getElementById(
+                "baseSalary"
+            )
+            .textContent =
+            `${formatMoney(result.base_salary)} تومان`;
+
+
+        const grossSalary =
+            Number(
+                result.base_salary || 0
+            );
+
+
+        document
+            .getElementById(
+                "grossSalary"
+            )
+            .textContent =
+            `${formatMoney(grossSalary)} تومان`;
+
+
+        document
+            .getElementById(
+                "deductions"
+            )
+            .textContent =
+            `${formatMoney(result.deductions)} تومان`;
+
+
+        document
+            .getElementById(
+                "finalSalary"
+            )
+            .textContent =
+            `${formatMoney(result.final_salary)} تومان`;
+
+
+
+        // -----------------------------------------
+        // شماره پرسنلی
+        // -----------------------------------------
+
+
+        await loadPersonnelNumber(
+            employee
+        );
+
+
+        // -----------------------------------------
+        // شرکت
+        // -----------------------------------------
+
+
+        await loadCompany();
+
+
+
+        loading.style.display =
+            "none";
+
+
+        payslip.style.display =
+            "block";
+
+
+    } catch (err) {
+
+
+        console.error(err);
+
+
+        loading.style.display =
+            "none";
+
+
+        errorBox.style.display =
+            "block";
+
+
+        errorBox.textContent =
+            err.message ||
+            "خطا در دریافت اطلاعات فیش.";
+
+    }
+
+}
+
+
+
+// =====================================================
+// بازگشت
+// =====================================================
+
+
+function goBack() {
+
+    const {
+        month
+    } = getParams();
+
+
+    if (month) {
+
+        window.location.href =
+            `salary.html?month=${encodeURIComponent(month)}`;
+
+    } else {
+
+        window.location.href =
+            "salary.html";
+
+    }
+
+}
+
+
+
+// =====================================================
+// خروج
+// =====================================================
+
+
+async function logout() {
+
+    try {
+
+        await fetch(
+            "/api/logout",
+            {
+                method: "POST"
+            }
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+
+    window.location.href =
+        "/login.html";
+
+}
+
+
+
+// =====================================================
+// اجرا
+// =====================================================
+
+
+loadPayslip();
+
+</script>
+
+
+</body>
+
+</html>

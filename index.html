@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>سیستم مدیریت کارکنان و حقوق</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 23px;
+        }
+
+        .logout {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Tahoma;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 15px;
+        }
+
+        .welcome {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.06);
+        }
+
+        .welcome h2 {
+            margin-top: 0;
+        }
+
+        .welcome p {
+            color: #64748b;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.06);
+
+            cursor: pointer;
+
+            transition: .2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0,0,0,.1);
+        }
+
+        .icon {
+            font-size: 35px;
+            margin-bottom: 12px;
+        }
+
+        .card h3 {
+            margin: 5px 0 10px;
+        }
+
+        .card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 35px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        @media(max-width:800px) {
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media(max-width:550px) {
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <h1>
+        🏢 سیستم مدیریت کارکنان و حقوق
+    </h1>
+
+    <button
+        class="logout"
+        onclick="logout()"
+    >
+        🚪 خروج از حساب
+    </button>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="welcome">
+
+        <h2>
+            خوش آمدید 👋
+        </h2>
+
+        <p>
+            از این قسمت می‌توانید کارکنان، ساعت کاری،
+            حقوق و کسورات را مدیریت کنید.
+        </p>
+
+    </div>
+
+
+
+    <div class="grid">
+
+
+        <!-- کارکنان -->
+
+        <div
+            class="card"
+            onclick="go('employees.html')"
+        >
+
+            <div class="icon">
+                👥
+            </div>
+
+            <h3>
+                مدیریت کارکنان
+            </h3>
+
+            <p>
+                افزودن، ویرایش و حذف کارکنان
+                و مدیریت حقوق ساعتی.
+            </p>
+
+        </div>
+
+
+
+        <!-- ثبت ساعت -->
+
+        <div
+            class="card"
+            onclick="go('work-hours.html')"
+        >
+
+            <div class="icon">
+                ⏰
+            </div>
+
+            <h3>
+                ثبت ساعت کاری
+            </h3>
+
+            <p>
+                ثبت ساعت شروع، پایان و
+                اضافه‌کاری کارکنان.
+            </p>
+
+        </div>
+
+
+
+        <!-- حقوق -->
+
+        <div
+            class="card"
+            onclick="go('salary.html')"
+        >
+
+            <div class="icon">
+                💰
+            </div>
+
+            <h3>
+                محاسبه حقوق
+            </h3>
+
+            <p>
+                محاسبه حقوق ماهانه،
+                اضافه‌کاری و کسورات.
+            </p>
+
+        </div>
+
+
+
+        <!-- کسورات -->
+
+        <div
+            class="card"
+            onclick="go('deductions.html')"
+        >
+
+            <div class="icon">
+                📉
+            </div>
+
+            <h3>
+                کسورات
+            </h3>
+
+            <p>
+                ثبت و مدیریت کسورات
+                کارکنان.
+            </p>
+
+        </div>
+
+
+
+        <!-- فیش -->
+
+        <div
+            class="card"
+            onclick="go('salary.html')"
+        >
+
+            <div class="icon">
+                🧾
+            </div>
+
+            <h3>
+                فیش حقوقی
+            </h3>
+
+            <p>
+                مشاهده و چاپ فیش حقوقی
+                کارکنان.
+            </p>
+
+        </div>
+
+
+
+        <!-- تنظیمات -->
+
+        <div
+            class="card"
+            onclick="go('company.html')"
+        >
+
+            <div class="icon">
+                ⚙️
+            </div>
+
+            <h3>
+                تنظیمات شرکت
+            </h3>
+
+            <p>
+                نام شرکت، نام مدیر و
+                اطلاعات مربوط به شرکت.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="footer">
+
+        سیستم مدیریت کارکنان و حقوق
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+function go(page) {
+
+    window.location.href = page;
+
+}
+
+
+
+async function logout() {
+
+    try {
+
+        await fetch(
+            "/api/logout",
+            {
+                method: "POST"
+            }
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+
+    window.location.href =
+        "/login.html";
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

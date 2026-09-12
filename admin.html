@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>گزارش ساعت کاری</title>
+
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            margin: 30px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .filter {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        input {
+            padding: 8px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-bottom: 30px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>گزارش ساعت کاری کارکنان</h1>
+
+    <!-- فیلتر ماه -->
+    <div class="filter">
+
+        <label for="reportMonth">
+            ماه گزارش:
+        </label>
+
+        <input
+            type="text"
+            id="reportMonth"
+            placeholder="مثلاً 1405-05"
+        >
+
+        <button onclick="loadReport()">
+            نمایش گزارش
+        </button>
+
+        <button onclick="clearFilter()">
+            نمایش همه
+        </button>
+
+    </div>
+
+
+    <!-- گزارش روزانه -->
+    <h2>گزارش روزانه</h2>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>نام کارمند</th>
+                <th>تاریخ</th>
+                <th>ساعت شروع</th>
+                <th>ساعت پایان</th>
+                <th>مدت کار</th>
+            </tr>
+        </thead>
+
+        <tbody id="workHoursTable">
+        </tbody>
+
+    </table>
+
+
+    <!-- خلاصه -->
+    <h2>خلاصه ساعت کاری کارکنان</h2>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>نام کارمند</th>
+                <th>روزهای کاری</th>
+                <th>مجموع ساعت کار</th>
+            </tr>
+        </thead>
+
+        <tbody id="summaryTable">
+        </tbody>
+
+    </table>
+
+
+    <script>
+
+        function formatWorkTime(minutes) {
+
+            if (!minutes) {
+                return "0 ساعت";
+            }
+
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+
+            return `${hours} ساعت و ${remainingMinutes} دقیقه`;
+        }
+
+
+        async function loadWorkHours(month = "") {
+
+            let url = "/api/work-hours";
+
+            if (month) {
+                url += "?month=" + encodeURIComponent(month);
+            }
+
+            const response = await fetch(url);
+
+            const records = await response.json();
+
+            const table = document.getElementById("workHoursTable");
+
+            table.innerHTML = "";
+
+            if (records.length === 0) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty">
+                            رکوردی پیدا نشد.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            records.forEach(record => {
+
+                const row = `
+                    <tr>
+                        <td>${record.employee_name}</td>
+                        <td>${record.work_date}</td>
+                        <td>${record.start_time}</td>
+                        <td>${record.end_time}</td>
+                        <td>${formatWorkTime(record.work_minutes)}</td>
+                    </tr>
+                `;
+
+                table.innerHTML += row;
+            });
+        }
+
+
+        async function loadSummary(month = "") {
+
+            let url = "/api/work-hours/summary";
+
+            if (month) {
+                url += "?month=" + encodeURIComponent(month);
+            }
+
+            const response = await fetch(url);
+
+            const summary = await response.json();
+
+            const table = document.getElementById("summaryTable");
+
+            table.innerHTML = "";
+
+            if (summary.length === 0) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="empty">
+                            گزارشی برای این ماه وجود ندارد.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            summary.forEach(item => {
+
+                const totalHours =
+                    Math.floor(item.total_minutes / 60);
+
+                const totalMinutes =
+                    item.total_minutes % 60;
+
+                const row = `
+                    <tr>
+                        <td>${item.employee_name}</td>
+                        <td>${item.work_days}</td>
+                        <td>
+                            ${totalHours} ساعت و ${totalMinutes} دقیقه
+                        </td>
+                    </tr>
+                `;
+
+                table.innerHTML += row;
+            });
+        }
+
+
+        async function loadReport() {
+
+            const month =
+                document.getElementById("reportMonth").value.trim();
+
+            await loadWorkHours(month);
+            await loadSummary(month);
+        }
+
+
+        async function clearFilter() {
+
+            document.getElementById("reportMonth").value = "";
+
+            await loadWorkHours();
+            await loadSummary();
+        }
+
+
+        // بارگذاری اولیه
+        loadReport();
+
+    </script>
+
+</body>
+
+</html>
