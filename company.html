@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,initial-scale=1">
+
+<title>تنظیمات شرکت</title>
+
+<style>
+
+body {
+    margin:0;
+    font-family:Tahoma,Arial;
+    background:#f1f5f9;
+}
+
+header {
+    background:white;
+    padding:18px 25px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.container {
+    max-width:700px;
+    margin:40px auto;
+    padding:15px;
+}
+
+.box {
+    background:white;
+    padding:30px;
+    border-radius:15px;
+}
+
+input {
+    width:100%;
+    box-sizing:border-box;
+    padding:13px;
+    margin:8px 0 15px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    font-family:Tahoma;
+}
+
+button {
+    padding:11px 18px;
+    border:0;
+    border-radius:8px;
+    cursor:pointer;
+    font-family:Tahoma;
+}
+
+.save {
+    background:#2563eb;
+    color:white;
+}
+
+.logout {
+    background:#dc2626;
+    color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h2>⚙️ تنظیمات شرکت</h2>
+
+<div>
+
+<button onclick="location.href='index.html'">
+← داشبورد
+</button>
+
+<button
+    class="logout"
+    onclick="logout()"
+>
+خروج
+</button>
+
+</div>
+
+</header>
+
+
+<div class="container">
+
+<div class="box">
+
+<h2>اطلاعات شرکت</h2>
+
+<label>
+نام شرکت
+</label>
+
+<input id="company_name">
+
+
+<label>
+نام مدیر
+</label>
+
+<input id="manager_name">
+
+
+<button
+    class="save"
+    onclick="save()"
+>
+💾 ذخیره تنظیمات
+</button>
+
+<p id="message"></p>
+
+</div>
+
+</div>
+
+
+<script>
+
+async function load() {
+
+    const response =
+        await fetch("/api/company");
+
+
+    if(!response.ok) {
+
+        location.href="index.html";
+        return;
+
+    }
+
+
+    const company =
+        await response.json();
+
+
+    document
+        .getElementById("company_name")
+        .value =
+        company.company_name || "";
+
+
+    document
+        .getElementById("manager_name")
+        .value =
+        company.manager_name || "";
+
+}
+
+
+async function save() {
+
+    const company_name =
+        document
+            .getElementById("company_name")
+            .value;
+
+    const manager_name =
+        document
+            .getElementById("manager_name")
+            .value;
+
+
+    const response =
+        await fetch(
+            "/api/company",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    company_name,
+                    manager_name
+
+                })
+
+            }
+        );
+
+
+    const result =
+        await response.json();
+
+
+    document
+        .getElementById("message")
+        .textContent =
+        result.message;
+
+}
+
+
+async function logout() {
+
+    await fetch(
+        "/api/logout",
+        {method:"POST"}
+    );
+
+    location.href =
+        "/login.html";
+
+}
+
+
+load();
+
+</script>
+
+</body>
+
+</html>

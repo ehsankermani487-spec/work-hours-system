@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت کارکنان</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .header {
+            background: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            font-family: Tahoma, Arial, sans-serif;
+            cursor: pointer;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .back {
+            background: #475569;
+        }
+
+        .logout {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.06);
+        }
+
+        .box h2 {
+            margin-top: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: Tahoma;
+            font-size: 14px;
+        }
+
+        .submit {
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .cancel {
+            margin-top: 20px;
+            background: #64748b;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        .edit {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 2px;
+        }
+
+        .delete {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 2px;
+        }
+
+        .account {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 2px;
+        }
+
+        .empty {
+            padding: 25px;
+            color: #64748b;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        @media(max-width:600px) {
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .container {
+                padding: 10px;
+                margin: 15px auto;
+            }
+
+            .box {
+                padding: 15px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th,
+            td {
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <h1>👥 مدیریت کارکنان</h1>
+
+    <div class="buttons">
+
+        <button
+            class="btn back"
+            onclick="location.href='index.html'"
+        >
+            ← داشبورد
+        </button>
+
+        <button
+            class="btn logout"
+            onclick="logout()"
+        >
+            🚪 خروج
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <!-- فرم کارمند -->
+
+    <div class="box">
+
+        <h2 id="formTitle">
+            ➕ افزودن کارمند
+        </h2>
+
+        <form id="employeeForm">
+
+            <div class="form-grid">
+
+                <div>
+
+                    <label>
+                        شماره پرسنلی
+                    </label>
+
+                    <input
+                        type="text"
+                        id="personnelNumber"
+                        placeholder="مثلاً 1001"
+                        required
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        نام و نام خانوادگی
+                    </label>
+
+                    <input
+                        type="text"
+                        id="employeeName"
+                        placeholder="نام کارمند"
+                        required
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        حقوق ساعتی
+                    </label>
+
+                    <input
+                        type="number"
+                        id="hourlyRate"
+                        placeholder="مثلاً 950000"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="submit"
+                id="submitButton"
+            >
+                ثبت کارمند
+            </button>
+
+
+            <button
+                type="button"
+                class="cancel"
+                id="cancelButton"
+                onclick="cancelEdit()"
+            >
+                انصراف از ویرایش
+            </button>
+
+
+            <p id="message"></p>
+
+        </form>
+
+    </div>
+
+
+    <!-- لیست کارکنان -->
+
+    <div class="box">
+
+        <h2>
+            📋 لیست کارکنان
+        </h2>
+
+
+        <div style="overflow-x:auto;">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ردیف
+                        </th>
+
+                        <th>
+                            شماره پرسنلی
+                        </th>
+
+                        <th>
+                            نام کارمند
+                        </th>
+
+                        <th>
+                            حقوق ساعتی
+                        </th>
+
+                        <th>
+                            حساب کاربری
+                        </th>
+
+                        <th>
+                            عملیات
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="employeesTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let editingId = null;
+
+
+// =====================================================
+// دریافت کارکنان
+// =====================================================
+
+async function loadEmployees() {
+
+    try {
+
+        const response = await fetch(
+            "/api/employees",
+            {
+                credentials: "same-origin"
+            }
+        );
+
+
+        if (response.status === 401) {
+
+            window.location.href =
+                "/login.html";
+
+            return;
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "خطا در دریافت کارکنان"
+            );
+        }
+
+
+        const employees =
+            await response.json();
+
+
+        const table =
+            document.getElementById(
+                "employeesTable"
+            );
+
+
+        table.innerHTML = "";
+
+
+        if (
+            !Array.isArray(employees) ||
+            employees.length === 0
+        ) {
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="empty"
+                    >
+                        هنوز کارمندی ثبت نشده است.
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+        }
+
+
+        employees.forEach(
+            (employee, index) => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                const personnel =
+                    employee.personnel_number ||
+                    "-";
+
+
+                const rate =
+                    Number(
+                        employee.hourly_rate || 0
+                    ).toLocaleString(
+                        "fa-IR"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(personnel)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(employee.name)}
+                    </td>
+
+                    <td>
+                        ${rate}
+                    </td>
+
+                    <td>
+
+                        ${
+                            employee.username
+                                ? `
+                                    <div>${escapeHtml(employee.username)}</div>
+                                    <button
+                                        class="edit"
+                                        onclick="resetPassword(
+                                            ${employee.id},
+                                            '${escapeAttribute(employee.username)}'
+                                        )"
+                                    >
+                                        🔑 تغییر رمز
+                                    </button>
+                                `
+                                : `
+                                    <button
+                                        class="account"
+                                        onclick="createAccount(
+                                            ${employee.id},
+                                            '${escapeAttribute(employee.name)}'
+                                        )"
+                                    >
+                                        ➕ ایجاد حساب
+                                    </button>
+                                `
+                        }
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="edit"
+                            onclick="editEmployee(
+                                ${employee.id}
+                            )"
+                        >
+                            ✏️ ویرایش
+                        </button>
+
+                        <button
+                            class="delete"
+                            onclick="deleteEmployee(
+                                ${employee.id}
+                            )"
+                        >
+                            🗑 حذف
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                table.appendChild(row);
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "employeesTable"
+        ).innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="empty"
+                >
+                    خطا در دریافت لیست کارکنان.
+                </td>
+
+            </tr>
+
+        `;
+    }
+}
+
+
+// =====================================================
+// ثبت یا ویرایش کارمند
+// =====================================================
+
+document
+    .getElementById("employeeForm")
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const personnelNumber =
+                document.getElementById(
+                    "personnelNumber"
+                ).value.trim();
+
+
+            const name =
+                document.getElementById(
+                    "employeeName"
+                ).value.trim();
+
+
+            const hourlyRate =
+                Number(
+                    document.getElementById(
+                        "hourlyRate"
+                    ).value
+                );
+
+
+            if (
+                !personnelNumber ||
+                !name ||
+                !hourlyRate
+            ) {
+
+                showMessage(
+                    "شماره پرسنلی، نام و حقوق ساعتی را وارد کنید."
+                );
+
+                return;
+            }
+
+
+            try {
+
+                let response;
+
+
+                if (editingId === null) {
+
+                    response =
+                        await fetch(
+                            "/api/employees",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                credentials:
+                                    "same-origin",
+
+                                body:
+                                    JSON.stringify({
+
+                                        personnelNumber,
+
+                                        name,
+
+                                        hourlyRate
+
+                                    })
+                            }
+                        );
+
+                } else {
+
+                    response =
+                        await fetch(
+                            `/api/employees/${editingId}`,
+                            {
+                                method: "PUT",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                credentials:
+                                    "same-origin",
+
+                                body:
+                                    JSON.stringify({
+
+                                        personnelNumber,
+
+                                        name,
+
+                                        hourlyRate
+
+                                    })
+                            }
+                        );
+
+                }
+
+
+                if (
+                    response.status === 401
+                ) {
+
+                    window.location.href =
+                        "/login.html";
+
+                    return;
+                }
+
+
+                const result =
+                    await response.json();
+
+
+                showMessage(
+                    result.message ||
+                    "عملیات انجام شد."
+                );
+
+
+                if (response.ok) {
+
+                    resetForm();
+
+                    loadEmployees();
+
+                }
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                showMessage(
+                    "خطا در ارتباط با سرور."
+                );
+            }
+
+        }
+    );
+
+
+// =====================================================
+// شروع ویرایش
+// =====================================================
+
+async function editEmployee(id) {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/employees",
+                {
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        if (response.status === 401) {
+
+            window.location.href =
+                "/login.html";
+
+            return;
+        }
+
+
+        const employees =
+            await response.json();
+
+
+        const employee =
+            employees.find(
+                item =>
+                    Number(item.id) === Number(id)
+            );
+
+
+        if (!employee) {
+
+            alert(
+                "کارمند پیدا نشد."
+            );
+
+            return;
+        }
+
+
+        editingId =
+            employee.id;
+
+
+        document.getElementById(
+            "personnelNumber"
+        ).value =
+            employee.personnel_number || "";
+
+
+        document.getElementById(
+            "employeeName"
+        ).value =
+            employee.name;
+
+
+        document.getElementById(
+            "hourlyRate"
+        ).value =
+            employee.hourly_rate;
+
+
+        document.getElementById(
+            "formTitle"
+        ).textContent =
+            "✏️ ویرایش کارمند";
+
+
+        document.getElementById(
+            "submitButton"
+        ).textContent =
+            "ذخیره تغییرات";
+
+
+        document.getElementById(
+            "cancelButton"
+        ).style.display =
+            "inline-block";
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "خطا در دریافت اطلاعات کارمند."
+        );
+    }
+}
+
+
+// =====================================================
+// ایجاد حساب کاربری برای راننده
+// =====================================================
+
+async function createAccount(id, employeeName) {
+
+    const username =
+        prompt(
+            `نام کاربری برای «${employeeName}» را وارد کنید:`
+        );
+
+    if (!username || !username.trim()) {
+        return;
+    }
+
+
+    const password =
+        prompt(
+            `رمز عبور برای «${employeeName}» را وارد کنید:`
+        );
+
+    if (!password || !password.trim()) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/employees/${id}/account`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            username: username.trim(),
+                            password: password.trim()
+                        })
+                }
+            );
+
+
+        if (response.status === 401) {
+
+            window.location.href =
+                "/login.html";
+
+            return;
+        }
+
+
+        const result =
+            await response.json();
+
+
+        alert(
+            result.message ||
+            "عملیات انجام شد."
+        );
+
+
+        if (response.ok) {
+            loadEmployees();
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "خطا در ارتباط با سرور."
+        );
+    }
+}
+
+
+// =====================================================
+// تغییر رمز عبور حساب راننده
+// =====================================================
+
+async function resetPassword(id, username) {
+
+    const password =
+        prompt(
+            `رمز عبور جدید برای «${username}» را وارد کنید:`
+        );
+
+    if (!password || !password.trim()) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/employees/${id}/account`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            password: password.trim()
+                        })
+                }
+            );
+
+
+        if (response.status === 401) {
+
+            window.location.href =
+                "/login.html";
+
+            return;
+        }
+
+
+        const result =
+            await response.json();
+
+
+        alert(
+            result.message ||
+            "عملیات انجام شد."
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "خطا در ارتباط با سرور."
+        );
+    }
+}
+
+
+// =====================================================
+// حذف کارمند
+// =====================================================
+
+async function deleteEmployee(id) {
+
+    const confirmed =
+        confirm(
+            "آیا از حذف این کارمند مطمئن هستید؟"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/employees/${id}`,
+                {
+                    method: "DELETE",
+
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        if (response.status === 401) {
+
+            window.location.href =
+                "/login.html";
+
+            return;
+        }
+
+
+        const result =
+            await response.json();
+
+
+        alert(
+            result.message ||
+            "کارمند حذف شد."
+        );
+
+
+        if (response.ok) {
+
+            loadEmployees();
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "خطا در حذف کارمند."
+        );
+    }
+}
+
+
+// =====================================================
+// لغو ویرایش
+// =====================================================
+
+function cancelEdit() {
+
+    resetForm();
+
+}
+
+
+// =====================================================
+// پاک کردن فرم
+// =====================================================
+
+function resetForm() {
+
+    editingId = null;
+
+
+    document
+        .getElementById(
+            "employeeForm"
+        )
+        .reset();
+
+
+    document.getElementById(
+        "formTitle"
+    ).textContent =
+        "➕ افزودن کارمند";
+
+
+    document.getElementById(
+        "submitButton"
+    ).textContent =
+        "ثبت کارمند";
+
+
+    document.getElementById(
+        "cancelButton"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        "";
+}
+
+
+// =====================================================
+// پیام
+// =====================================================
+
+function showMessage(message) {
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        message;
+}
+
+
+// =====================================================
+// جلوگیری از ورود HTML ناخواسته
+// =====================================================
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function escapeAttribute(value) {
+
+    return String(value)
+        .replaceAll("\\", "\\\\")
+        .replaceAll("'", "\\'");
+}
+
+
+// =====================================================
+// خروج
+// =====================================================
+
+async function logout() {
+
+    try {
+
+        await fetch(
+            "/api/logout",
+            {
+                method: "POST",
+                credentials:
+                    "same-origin"
+            }
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+
+    window.location.href =
+        "/login.html";
+}
+
+
+// =====================================================
+// شروع صفحه
+// =====================================================
+
+loadEmployees();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>سرویس‌های روزانه</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .header {
+            background: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            font-family: Tahoma, Arial, sans-serif;
+            cursor: pointer;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .back {
+            background: #475569;
+        }
+
+        .logout {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.06);
+        }
+
+        .box h2 {
+            margin-top: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .full {
+            grid-column: 1/-1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: Tahoma;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .submit {
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+        }
+
+        .filter {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .filter .field {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .filter button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        .empty {
+            padding: 25px;
+            color: #64748b;
+        }
+
+        .del-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #15803d;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        @media(max-width:600px) {
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .container {
+                padding: 10px;
+                margin: 15px auto;
+            }
+
+            .box {
+                padding: 15px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <h1>🚗 سرویس‌های روزانه</h1>
+
+    <div class="buttons">
+
+        <button class="btn back" onclick="location.href='index.html'">
+            ← داشبورد
+        </button>
+
+        <button class="btn logout" onclick="logout()">
+            🚪 خروج
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="box">
+
+        <h2>➕ ثبت سرویس جدید</h2>
+
+        <form id="serviceForm">
+
+            <div class="form-grid">
+
+                <div id="employeeFieldWrap">
+
+                    <label>کارمند</label>
+
+                    <select id="employeeName" required>
+                        <option value="">در حال دریافت کارکنان...</option>
+                    </select>
+
+                </div>
+
+                <div>
+                    <label>تاریخ</label>
+                    <input
+                        type="text"
+                        id="serviceDate"
+                        placeholder="1405-05-06"
+                        pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>ساعت انجام سرویس</label>
+                    <input type="time" id="serviceTime">
+                </div>
+
+                <div>
+                    <label>مقصد (کجا رفته)</label>
+                    <input type="text" id="destination" placeholder="مثلاً شهرداری مرکز" required>
+                </div>
+
+                <div>
+                    <label>در اختیار چه کسی بوده</label>
+                    <input type="text" id="assignedTo" placeholder="مثلاً آقای محمدی">
+                </div>
+
+                <div class="full">
+                    <label>توضیحات</label>
+                    <textarea id="description" placeholder="توضیحات اختیاری"></textarea>
+                </div>
+
+            </div>
+
+            <button type="submit" class="submit">ثبت سرویس</button>
+
+            <p id="message"></p>
+
+        </form>
+
+    </div>
+
+
+    <div class="box">
+
+        <h2>📋 لیست سرویس‌ها</h2>
+
+        <div class="filter">
+
+            <div class="field">
+                <label>فیلتر ماه (اختیاری)</label>
+                <input type="text" id="filterMonth" placeholder="مثلاً 1405-05">
+            </div>
+
+            <button onclick="loadServices()">اعمال فیلتر</button>
+            <button onclick="clearFilter()">نمایش همه</button>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>کارمند</th>
+                        <th>تاریخ</th>
+                        <th>ساعت</th>
+                        <th>مقصد</th>
+                        <th>در اختیار</th>
+                        <th>توضیحات</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+
+                <tbody id="servicesTable">
+                    <tr><td colspan="7" class="empty">در حال بارگذاری...</td></tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let isAdmin = false;
+
+// =====================================================
+// دریافت کارکنان برای دراپ‌داون
+// =====================================================
+
+async function loadEmployees() {
+
+    const select = document.getElementById("employeeName");
+
+    try {
+
+        const response = await fetch("/api/employees", { credentials: "same-origin" });
+
+        if (response.status === 401) {
+            location.href = "/login.html";
+            return;
+        }
+
+        const employees = await response.json();
+
+        select.innerHTML = `<option value="">انتخاب کارمند</option>`;
+
+        if (!Array.isArray(employees) || employees.length === 0) {
+            select.innerHTML = `<option value="">کارمندی یافت نشد</option>`;
+            return;
+        }
+
+        employees.forEach(employee => {
+
+            const option = document.createElement("option");
+            option.value = employee.name;
+
+            option.textContent = employee.personnel_number
+                ? `${employee.name} - ${employee.personnel_number}`
+                : employee.name;
+
+            select.appendChild(option);
+        });
+
+        // اگر کارمند فقط یک گزینه (خودش) دارد، همان را انتخاب و پنهان کن
+        if (!isAdmin && employees.length === 1) {
+
+            select.value = employees[0].name;
+            document.getElementById("employeeFieldWrap").style.display = "none";
+        }
+
+    } catch (error) {
+
+        console.error(error);
+        select.innerHTML = `<option value="">خطا در دریافت کارکنان</option>`;
+    }
+}
+
+
+// =====================================================
+// ثبت سرویس جدید
+// =====================================================
+
+document.getElementById("serviceForm").addEventListener("submit", async function (event) {
+
+    event.preventDefault();
+
+    const employeeName = document.getElementById("employeeName").value;
+    const serviceDate = document.getElementById("serviceDate").value.trim();
+    const serviceTime = document.getElementById("serviceTime").value;
+    const destination = document.getElementById("destination").value.trim();
+    const assignedTo = document.getElementById("assignedTo").value.trim();
+    const description = document.getElementById("description").value.trim();
+
+    const message = document.getElementById("message");
+
+    if (!employeeName || !serviceDate || !destination) {
+        message.textContent = "لطفاً تمام اطلاعات ضروری را وارد کنید.";
+        message.className = "error";
+        return;
+    }
+
+    try {
+
+        const response = await fetch("/api/services", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({
+                employeeName, serviceDate, serviceTime,
+                destination, assignedTo, description
+            })
+        });
+
+        if (response.status === 401) {
+            location.href = "/login.html";
+            return;
+        }
+
+        const result = await response.json();
+
+        message.textContent = result.message || "انجام شد.";
+        message.className = response.ok ? "success" : "error";
+
+        if (response.ok) {
+
+            const keepEmployee = document.getElementById("employeeName").value;
+            document.getElementById("serviceForm").reset();
+            document.getElementById("employeeName").value = keepEmployee;
+
+            loadServices();
+        }
+
+    } catch (error) {
+
+        console.error(error);
+        message.textContent = "خطا در ارتباط با سرور.";
+        message.className = "error";
+    }
+
+});
+
+
+// =====================================================
+// دریافت لیست سرویس‌ها
+// =====================================================
+
+async function loadServices() {
+
+    const table = document.getElementById("servicesTable");
+    const month = document.getElementById("filterMonth").value.trim();
+
+    try {
+
+        let url = "/api/services";
+        if (month) url += "?month=" + encodeURIComponent(month);
+
+        const response = await fetch(url, { credentials: "same-origin" });
+
+        if (response.status === 401) {
+            location.href = "/login.html";
+            return;
+        }
+
+        const services = await response.json();
+
+        table.innerHTML = "";
+
+        if (!Array.isArray(services) || services.length === 0) {
+            table.innerHTML = `<tr><td colspan="7" class="empty">سرویسی ثبت نشده است.</td></tr>`;
+            return;
+        }
+
+        services.forEach(item => {
+
+            table.innerHTML += `
+                <tr>
+                    <td>${escapeHtml(item.employee_name)}</td>
+                    <td>${escapeHtml(item.service_date)}</td>
+                    <td>${escapeHtml(item.service_time || "-")}</td>
+                    <td>${escapeHtml(item.destination)}</td>
+                    <td>${escapeHtml(item.assigned_to || "-")}</td>
+                    <td>${escapeHtml(item.description || "-")}</td>
+                    <td>
+                        <button class="del-btn" onclick="deleteService(${item.id})">حذف</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+
+        console.error(error);
+        table.innerHTML = `<tr><td colspan="7" class="empty">خطا در دریافت سرویس‌ها.</td></tr>`;
+    }
+}
+
+
+async function clearFilter() {
+    document.getElementById("filterMonth").value = "";
+    loadServices();
+}
+
+
+async function deleteService(id) {
+
+    if (!confirm("این سرویس حذف شود؟")) return;
+
+    try {
+
+        const response = await fetch(`/api/services/${id}`, {
+            method: "DELETE",
+            credentials: "same-origin"
+        });
+
+        const result = await response.json();
+        alert(result.message || "انجام شد.");
+        loadServices();
+
+    } catch (error) {
+        console.error(error);
+        alert("خطا در ارتباط با سرور.");
+    }
+}
+
+
+// =====================================================
+// جلوگیری از HTML ناخواسته
+// =====================================================
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+// =====================================================
+// خروج
+// =====================================================
+
+async function logout() {
+
+    try {
+        await fetch("/api/logout", { method: "POST", credentials: "same-origin" });
+    } catch (error) {
+        console.error(error);
+    }
+
+    location.href = "/login.html";
+}
+
+
+// =====================================================
+// شروع صفحه
+// =====================================================
+
+async function init() {
+
+    try {
+
+        const response = await fetch("/api/me", { credentials: "same-origin" });
+
+        if (response.status === 401) {
+            location.href = "/login.html";
+            return;
+        }
+
+        const me = await response.json();
+        isAdmin = me.role === "admin";
+
+    } catch (error) {
+        console.error(error);
+    }
+
+    await loadEmployees();
+    loadServices();
+}
+
+init();
+
+</script>
+
+</body>
+</html>
