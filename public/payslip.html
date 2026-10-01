@@ -628,6 +628,32 @@
                 <tr>
 
                     <th>
+                        ساعت تشویقی
+                    </th>
+
+                    <td id="bonusHours">
+                        -
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <th>
+                        مبلغ تشویقی
+                    </th>
+
+                    <td id="bonusAmount">
+                        -
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <th>
                         مجموع حقوق قبل از کسورات
                     </th>
 
@@ -1005,9 +1031,28 @@ async function loadPayslip() {
             `${formatMoney(result.base_salary)} تومان`;
 
 
+        document
+            .getElementById(
+                "bonusHours"
+            )
+            .textContent =
+            `${result.bonus_hours || 0} ساعت`;
+
+
+        document
+            .getElementById(
+                "bonusAmount"
+            )
+            .textContent =
+            `${formatMoney(result.bonuses || 0)} تومان`;
+
+
         const grossSalary =
             Number(
                 result.base_salary || 0
+            ) +
+            Number(
+                result.bonuses || 0
             );
 
 
