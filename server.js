@@ -6,10 +6,13 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const db = new Database("work-hours.db");
+const dbPath =
+    process.env.DB_PATH || "work-hours.db";
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const db = new Database(dbPath);
+
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 
 
 // =====================================================
@@ -81,6 +84,20 @@ if (!employeeColumns.some(column => column.name === "personnel_number")) {
 
 }
 
+// اضافه کردن ستون عکس پروفایل به جدول کاربران (در صورت نبود)
+
+const userColumns =
+    db.prepare("PRAGMA table_info(users)").all();
+
+if (!userColumns.some(column => column.name === "photo")) {
+
+    db.prepare(`
+        ALTER TABLE users
+        ADD COLUMN photo TEXT
+    `).run();
+
+}
+
 db.prepare(`
     CREATE TABLE IF NOT EXISTS company_settings (
         id INTEGER PRIMARY KEY,
@@ -106,6 +123,58 @@ if (!companySettings) {
 
 }
 
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS requests (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        employee_name TEXT NOT NULL,
+        request_type TEXT NOT NULL,
+        amount REAL,
+        start_date TEXT,
+        end_date TEXT,
+        description TEXT,
+        status TEXT NOT NULL DEFAULT 'pending',
+        admin_note TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        reviewed_at TEXT
+    )
+`).run();
+
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS bonuses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        employee_name TEXT NOT NULL,
+        bonus_date TEXT NOT NULL,
+        bonus_type TEXT NOT NULL,
+        hours REAL DEFAULT 0,
+        description TEXT
+    )
+`).run();
+
+const bonusColumns =
+    db.prepare("PRAGMA table_info(bonuses)").all();
+
+if (!bonusColumns.some(column => column.name === "hours")) {
+
+    db.prepare(`
+        ALTER TABLE bonuses
+        ADD COLUMN hours REAL DEFAULT 0
+    `).run();
+
+}
+
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS services (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        employee_name TEXT NOT NULL,
+        service_date TEXT NOT NULL,
+        service_time TEXT,
+        destination TEXT NOT NULL,
+        assigned_to TEXT,
+        description TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+`).run();
+
 
 // =====================================================
 // رمزنگاری رمز عبور
@@ -117,33 +186,6 @@ function hashPassword(password) {
         .createHash("sha256")
         .update(password)
         .digest("hex");
-
-}
-
-
-// =====================================================
-// ساخت حساب ادمین پیش‌فرض (فقط اگر هیچ کاربری وجود نداشته باشد)
-// =====================================================
-
-const userCount =
-    db.prepare(`
-        SELECT COUNT(*) AS count FROM users
-    `).get().count;
-
-if (userCount === 0) {
-
-    db.prepare(`
-        INSERT INTO users
-        (username, password_hash, role)
-        VALUES (?, ?, 'admin')
-    `).run(
-        "admin",
-        hashPassword("admin123")
-    );
-
-    console.log(
-        "⚠️  حساب ادمین پیش‌فرض ساخته شد — نام کاربری: admin — رمز عبور: admin123 — لطفاً هرچه سریع‌تر این رمز را تغییر دهید."
-    );
 
 }
 
@@ -276,7 +318,11 @@ const protectedPages = [
     "employees.html",
     "deductions.html",
     "company.html",
-    "admin.html"
+    "admin.html",
+    "requests.html",
+    "profile.html",
+    "bonuses.html",
+    "services.html"
 ];
 
 
@@ -295,7 +341,8 @@ app.get("/:page", requireLogin, (req, res, next) => {
             page === "employees.html" ||
             page === "deductions.html" ||
             page === "company.html" ||
-            page === "admin.html"
+            page === "admin.html" ||
+            page === "bonuses.html"
         )
     ) {
 
@@ -446,10 +493,16 @@ app.get("/api/me", requireLogin, (req, res) => {
 
     }
 
+    const userRow =
+        db.prepare(`
+            SELECT photo FROM users WHERE id = ?
+        `).get(req.user.id);
+
     res.json({
         id: req.user.id,
         username: req.user.username,
         role: req.user.role,
+        photo: userRow ? userRow.photo : null,
         employee
     });
 
@@ -1199,7 +1252,7 @@ app.delete(
 // کسورات
 // =====================================================
 
-(
+app.get(
     "/api/deductions",
     requireAdmin,
     (req, res) => {
@@ -1292,6 +1345,169 @@ app.post(
             res.status(500).json({
                 message:
                     "خطا در ثبت کسری."
+            });
+
+        }
+
+    }
+);
+
+
+app.delete(
+    "/api/deductions/:id",
+    requireAdmin,
+    (req, res) => {
+
+        try {
+
+            db.prepare(`
+                DELETE FROM deductions WHERE id = ?
+            `).run(req.params.id);
+
+            res.json({
+                message: "کسری حذف شد."
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+                message: "خطا در حذف کسری."
+            });
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// تشویقی‌ها
+// =====================================================
+
+app.get(
+    "/api/bonuses",
+    requireAdmin,
+    (req, res) => {
+
+        try {
+
+            const bonuses =
+                db.prepare(`
+                    SELECT *
+                    FROM bonuses
+                    ORDER BY id DESC
+                `).all();
+
+            res.json(bonuses);
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+                message:
+                    "خطا در دریافت تشویقی‌ها."
+            });
+
+        }
+
+    }
+);
+
+
+app.post(
+    "/api/bonuses",
+    requireAdmin,
+    (req, res) => {
+
+        try {
+
+            const {
+                employee_name,
+                bonus_date,
+                bonus_type,
+                hours,
+                description
+            } = req.body;
+
+
+            if (
+                !employee_name ||
+                !bonus_date ||
+                !bonus_type ||
+                !hours
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "اطلاعات کامل وارد نشده است."
+                });
+
+            }
+
+
+            db.prepare(`
+                INSERT INTO bonuses
+                (
+                    employee_name,
+                    bonus_date,
+                    bonus_type,
+                    hours,
+                    description
+                )
+                VALUES (?, ?, ?, ?, ?)
+            `).run(
+                employee_name,
+                bonus_date,
+                bonus_type,
+                Number(hours),
+                description || ""
+            );
+
+
+            res.json({
+                message:
+                    "تشویقی با موفقیت ثبت شد."
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+                message:
+                    "خطا در ثبت تشویقی."
+            });
+
+        }
+
+    }
+);
+
+
+app.delete(
+    "/api/bonuses/:id",
+    requireAdmin,
+    (req, res) => {
+
+        try {
+
+            db.prepare(`
+                DELETE FROM bonuses WHERE id = ?
+            `).run(req.params.id);
+
+            res.json({
+                message: "تشویقی حذف شد."
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+                message: "خطا در حذف تشویقی."
             });
 
         }
@@ -1445,8 +1661,32 @@ app.get(
                         ).total;
 
 
+                    const bonusHours =
+                        db.prepare(`
+                            SELECT
+                                COALESCE(
+                                    SUM(hours),
+                                    0
+                                ) AS total
+
+                            FROM bonuses
+
+                            WHERE employee_name = ?
+
+                            AND bonus_date LIKE ?
+                        `).get(
+                            item.name,
+                            `${month}-%`
+                        ).total;
+
+                    const bonus =
+                        Number(bonusHours || 0) *
+                        Number(item.hourly_rate || 0);
+
+
                     const finalSalary =
-                        baseSalary -
+                        baseSalary +
+                        Number(bonus || 0) -
                         Number(deduction || 0);
 
 
@@ -1468,6 +1708,16 @@ app.get(
 
                         base_salary:
                             Math.round(baseSalary),
+
+                        bonus_hours:
+                            Number(
+                                bonusHours.toFixed(2)
+                            ),
+
+                        bonuses:
+                            Math.round(
+                                Number(bonus || 0)
+                            ),
 
                         deductions:
                             Math.round(
@@ -1622,8 +1872,33 @@ app.get(
                 ).total;
 
 
+            const bonusHours =
+                db.prepare(`
+                    SELECT
+                        COALESCE(
+                            SUM(hours),
+                            0
+                        ) AS total
+
+                    FROM bonuses
+
+                    WHERE employee_name = ?
+
+                    AND bonus_date LIKE ?
+                `).get(
+                    employee.name,
+                    `${month}-%`
+                ).total;
+
+
+            const bonuses =
+                Number(bonusHours || 0) *
+                Number(employee.hourly_rate || 0);
+
+
             const finalSalary =
-                baseSalary -
+                baseSalary +
+                Number(bonuses || 0) -
                 Number(deductions || 0);
 
 
@@ -1647,6 +1922,16 @@ app.get(
 
                 base_salary:
                     Math.round(baseSalary),
+
+                bonus_hours:
+                    Number(
+                        bonusHours.toFixed(2)
+                    ),
+
+                bonuses:
+                    Math.round(
+                        Number(bonuses || 0)
+                    ),
 
                 deductions:
                     Math.round(
@@ -1801,6 +2086,597 @@ if (!adminExists) {
     );
 
 }
+
+
+// =====================================================
+// سرویس‌ها (تعداد و جزئیات سرویس‌های روزانه کارکنان)
+// =====================================================
+
+app.post("/api/services", requireLogin, (req, res) => {
+
+    try {
+
+        let {
+            employeeName,
+            serviceDate,
+            serviceTime,
+            destination,
+            assignedTo,
+            description
+        } = req.body;
+
+        if (req.user.role !== "admin") {
+
+            if (!req.user.employee_id) {
+
+                return res.status(400).json({
+                    message: "حساب شما به هیچ کارمندی متصل نیست."
+                });
+
+            }
+
+            const employee =
+                db.prepare(`
+                    SELECT name FROM employees
+                    WHERE id = ?
+                `).get(req.user.employee_id);
+
+            if (!employee) {
+
+                return res.status(400).json({
+                    message: "کارمند مرتبط با این حساب پیدا نشد."
+                });
+
+            }
+
+            employeeName = employee.name;
+
+        }
+
+        if (!employeeName || !serviceDate || !destination) {
+
+            return res.status(400).json({
+                message: "لطفاً نام کارمند، تاریخ و مقصد را وارد کنید."
+            });
+
+        }
+
+        db.prepare(`
+            INSERT INTO services
+            (
+                employee_name,
+                service_date,
+                service_time,
+                destination,
+                assigned_to,
+                description
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            employeeName,
+            serviceDate,
+            serviceTime || null,
+            destination,
+            assignedTo || null,
+            description || null
+        );
+
+        res.json({
+            message: "سرویس با موفقیت ثبت شد."
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "خطا در ثبت سرویس."
+        });
+
+    }
+
+});
+
+
+app.get("/api/services", requireLogin, (req, res) => {
+
+    try {
+
+        const month = req.query.month;
+        const monthFilter = month ? `${month}-%` : "%";
+
+        if (req.user.role === "admin") {
+
+            const services =
+                db.prepare(`
+                    SELECT * FROM services
+                    WHERE service_date LIKE ?
+                    ORDER BY service_date DESC, service_time DESC
+                `).all(monthFilter);
+
+            return res.json(services);
+
+        }
+
+        if (!req.user.employee_id) {
+            return res.json([]);
+        }
+
+        const employee =
+            db.prepare(`
+                SELECT name FROM employees WHERE id = ?
+            `).get(req.user.employee_id);
+
+        if (!employee) {
+            return res.json([]);
+        }
+
+        const services =
+            db.prepare(`
+                SELECT * FROM services
+                WHERE employee_name = ?
+                AND service_date LIKE ?
+                ORDER BY service_date DESC, service_time DESC
+            `).all(employee.name, monthFilter);
+
+        res.json(services);
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "خطا در دریافت سرویس‌ها."
+        });
+
+    }
+
+});
+
+
+app.delete("/api/services/:id", requireLogin, (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+
+        if (req.user.role === "admin") {
+
+            db.prepare(`DELETE FROM services WHERE id = ?`).run(id);
+            return res.json({ message: "سرویس حذف شد." });
+
+        }
+
+        if (!req.user.employee_id) {
+
+            return res.status(403).json({
+                message: "دسترسی غیرمجاز."
+            });
+
+        }
+
+        const employee =
+            db.prepare(`
+                SELECT name FROM employees WHERE id = ?
+            `).get(req.user.employee_id);
+
+        const result =
+            db.prepare(`
+                DELETE FROM services
+                WHERE id = ?
+                AND employee_name = ?
+            `).run(id, employee ? employee.name : "");
+
+        if (result.changes === 0) {
+
+            return res.status(404).json({
+                message: "سرویس پیدا نشد."
+            });
+
+        }
+
+        res.json({ message: "سرویس حذف شد." });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "خطا در حذف سرویس."
+        });
+
+    }
+
+});
+
+
+// =====================================================
+// آپلود عکس پروفایل
+// =====================================================
+
+app.put("/api/me/photo", requireLogin, (req, res) => {
+
+    try {
+
+        const { photo } = req.body;
+
+        if (!photo || !photo.startsWith("data:image/")) {
+
+            return res.status(400).json({
+                message: "لطفاً یک فایل تصویر معتبر انتخاب کنید."
+            });
+
+        }
+
+        if (photo.length > 3 * 1024 * 1024) {
+
+            return res.status(400).json({
+                message: "حجم عکس زیاد است. لطفاً عکس کوچک‌تری انتخاب کنید."
+            });
+
+        }
+
+        db.prepare(`
+            UPDATE users SET photo = ? WHERE id = ?
+        `).run(photo, req.user.id);
+
+        res.json({
+            message: "عکس پروفایل با موفقیت به‌روزرسانی شد."
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "خطا در آپلود عکس."
+        });
+
+    }
+
+});
+
+
+// =====================================================
+// تغییر رمز عبور خودم (توسط هر کاربر، ادمین یا راننده)
+// =====================================================
+
+app.put("/api/me/password", requireLogin, (req, res) => {
+
+    try {
+
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+
+            return res.status(400).json({
+                message: "لطفاً رمز فعلی و رمز جدید را وارد کنید."
+            });
+
+        }
+
+        if (newPassword.length < 4) {
+
+            return res.status(400).json({
+                message: "رمز جدید باید حداقل ۴ کاراکتر باشد."
+            });
+
+        }
+
+        const user =
+            db.prepare(`
+                SELECT * FROM users WHERE id = ?
+            `).get(req.user.id);
+
+        if (
+            !user ||
+            hashPassword(currentPassword) !== user.password_hash
+        ) {
+
+            return res.status(400).json({
+                message: "رمز عبور فعلی اشتباه است."
+            });
+
+        }
+
+        db.prepare(`
+            UPDATE users
+            SET password_hash = ?
+            WHERE id = ?
+        `).run(
+            hashPassword(newPassword),
+            req.user.id
+        );
+
+        res.json({
+            message: "رمز عبور با موفقیت تغییر کرد."
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "خطا در تغییر رمز عبور."
+        });
+
+    }
+
+});
+
+
+// =====================================================
+// درخواست‌ها (مساعده، مرخصی و سایر)
+// =====================================================
+
+// ثبت درخواست جدید توسط کارمند (یا ادمین برای هرکسی)
+app.post("/api/requests", requireLogin, (req, res) => {
+
+    try {
+
+        let {
+            employeeName,
+            requestType,
+            amount,
+            startDate,
+            endDate,
+            description
+        } = req.body;
+
+        // اگر کاربر راننده است، فقط اجازه دارد برای خودش درخواست ثبت کند
+        if (req.user.role !== "admin") {
+
+            if (!req.user.employee_id) {
+
+                return res.status(400).json({
+                    message: "حساب شما به هیچ کارمندی متصل نیست."
+                });
+
+            }
+
+            const employee =
+                db.prepare(`
+                    SELECT name FROM employees
+                    WHERE id = ?
+                `).get(req.user.employee_id);
+
+            if (!employee) {
+
+                return res.status(400).json({
+                    message: "کارمند مرتبط با این حساب پیدا نشد."
+                });
+
+            }
+
+            employeeName = employee.name;
+
+        }
+
+        if (!employeeName || !requestType) {
+
+            return res.status(400).json({
+                message: "لطفاً نام کارمند و نوع درخواست را مشخص کنید."
+            });
+
+        }
+
+        if (requestType === "advance" && !amount) {
+
+            return res.status(400).json({
+                message: "لطفاً مبلغ مساعده را وارد کنید."
+            });
+
+        }
+
+        if (requestType === "leave" && (!startDate || !endDate)) {
+
+            return res.status(400).json({
+                message: "لطفاً تاریخ شروع و پایان مرخصی را وارد کنید."
+            });
+
+        }
+
+        db.prepare(`
+            INSERT INTO requests
+            (
+                employee_name,
+                request_type,
+                amount,
+                start_date,
+                end_date,
+                description
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            employeeName,
+            requestType,
+            amount || null,
+            startDate || null,
+            endDate || null,
+            description || null
+        );
+
+        res.json({
+            message: "درخواست شما با موفقیت ثبت شد."
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "خطا در ثبت درخواست."
+        });
+
+    }
+
+});
+
+
+// مشاهده‌ی درخواست‌ها (ادمین همه را می‌بیند، کارمند فقط مال خودش را)
+app.get("/api/requests", requireLogin, (req, res) => {
+
+    try {
+
+        if (req.user.role === "admin") {
+
+            const requests =
+                db.prepare(`
+                    SELECT * FROM requests
+                    ORDER BY created_at DESC
+                `).all();
+
+            return res.json(requests);
+
+        }
+
+        if (!req.user.employee_id) {
+
+            return res.json([]);
+
+        }
+
+        const employee =
+            db.prepare(`
+                SELECT name FROM employees
+                WHERE id = ?
+            `).get(req.user.employee_id);
+
+        if (!employee) {
+
+            return res.json([]);
+
+        }
+
+        const requests =
+            db.prepare(`
+                SELECT * FROM requests
+                WHERE employee_name = ?
+                ORDER BY created_at DESC
+            `).all(employee.name);
+
+        res.json(requests);
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "خطا در دریافت درخواست‌ها."
+        });
+
+    }
+
+});
+
+
+// تایید یا رد درخواست توسط ادمین
+app.put("/api/requests/:id", requireAdmin, (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+        const { status, adminNote } = req.body;
+
+        if (!["approved", "rejected", "pending"].includes(status)) {
+
+            return res.status(400).json({
+                message: "وضعیت نامعتبر است."
+            });
+
+        }
+
+        const result =
+            db.prepare(`
+                UPDATE requests
+                SET
+                    status = ?,
+                    admin_note = ?,
+                    reviewed_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            `).run(status, adminNote || null, id);
+
+        if (result.changes === 0) {
+
+            return res.status(404).json({
+                message: "درخواست پیدا نشد."
+            });
+
+        }
+
+        res.json({
+            message: "وضعیت درخواست به‌روزرسانی شد."
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "خطا در به‌روزرسانی درخواست."
+        });
+
+    }
+
+});
+
+
+// حذف/لغو یک درخواست (ادمین هر درخواستی، کارمند فقط درخواست در انتظار خودش)
+app.delete("/api/requests/:id", requireLogin, (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+
+        if (req.user.role === "admin") {
+
+            db.prepare(`DELETE FROM requests WHERE id = ?`).run(id);
+            return res.json({ message: "درخواست حذف شد." });
+
+        }
+
+        if (!req.user.employee_id) {
+
+            return res.status(403).json({
+                message: "دسترسی غیرمجاز."
+            });
+
+        }
+
+        const employee =
+            db.prepare(`
+                SELECT name FROM employees WHERE id = ?
+            `).get(req.user.employee_id);
+
+        const result =
+            db.prepare(`
+                DELETE FROM requests
+                WHERE id = ?
+                AND employee_name = ?
+                AND status = 'pending'
+            `).run(id, employee ? employee.name : "");
+
+        if (result.changes === 0) {
+
+            return res.status(404).json({
+                message: "این درخواست قابل لغو نیست."
+            });
+
+        }
+
+        res.json({ message: "درخواست لغو شد." });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "خطا در لغو درخواست."
+        });
+
+    }
+
+});
 
 
 // =====================================================
