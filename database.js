@@ -82,4 +82,22 @@ if (!company) {
 
 }
 
+// اضافه کردن شماره پرسنلی به کارکنان
+try {
+    db.prepare(`
+        ALTER TABLE employees
+        ADD COLUMN personnel_number TEXT
+    `).run();
+
+    console.log("ستون شماره پرسنلی اضافه شد.");
+
+} catch (error) {
+
+    // اگر ستون قبلاً وجود داشته باشد، مشکلی نیست
+    if (!error.message.includes("duplicate column name")) {
+        console.log(error.message);
+    }
+
+}
+
 console.log("دیتابیس آماده است.");
