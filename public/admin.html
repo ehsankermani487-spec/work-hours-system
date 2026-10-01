@@ -163,7 +163,7 @@
 
                 table.innerHTML = `
                     <tr>
-                        <td colspan="5" class="empty">
+                        <td colspan="6" class="empty">
                             رکوردی پیدا نشد.
                         </td>
                     </tr>
@@ -181,6 +181,7 @@
                         <td>${record.start_time}</td>
                         <td>${record.end_time}</td>
                         <td>${formatWorkTime(record.work_minutes)}</td>
+                        <td>${record.overtime || 0} ساعت</td>
                     </tr>
                 `;
 
@@ -209,7 +210,7 @@
 
                 table.innerHTML = `
                     <tr>
-                        <td colspan="3" class="empty">
+                        <td colspan="4" class="empty">
                             گزارشی برای این ماه وجود ندارد.
                         </td>
                     </tr>
@@ -232,6 +233,9 @@
                         <td>${item.work_days}</td>
                         <td>
                             ${totalHours} ساعت و ${totalMinutes} دقیقه
+                        </td>
+                        <td>
+                            ${item.total_overtime || 0} ساعت
                         </td>
                     </tr>
                 `;
