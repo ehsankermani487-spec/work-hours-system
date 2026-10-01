@@ -2,1184 +2,544 @@
 <html lang="fa" dir="rtl">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدیریت کارکنان</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
 
-        body {
-            margin: 0;
-            font-family: Tahoma, Arial, sans-serif;
-            background: #f1f5f9;
-            color: #1e293b;
-        }
+<meta name="viewport"
+      content="width=device-width,initial-scale=1">
 
-        .header {
-            background: white;
-            padding: 18px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,.08);
-        }
+<title>مدیریت کارکنان</title>
 
-        .header h1 {
-            margin: 0;
-            font-size: 22px;
-        }
+<style>
 
-        .buttons {
-            display: flex;
-            gap: 10px;
-        }
+body {
+    margin:0;
+    font-family:Tahoma,Arial;
+    background:#f1f5f9;
+}
 
-        button {
-            font-family: Tahoma, Arial, sans-serif;
-            cursor: pointer;
-        }
+header {
+    background:white;
+    padding:18px 25px;
+    display:flex;
+    justify-content:space-between;
+}
 
-        .btn {
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            color: white;
-        }
+.container {
+    max-width:1100px;
+    margin:30px auto;
+    padding:15px;
+}
 
-        .back {
-            background: #475569;
-        }
+.box {
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    margin-bottom:20px;
+}
 
-        .logout {
-            background: #dc2626;
-        }
+input {
+    padding:11px;
+    margin:5px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+}
 
-        .container {
-            max-width: 1100px;
-            margin: 35px auto;
-            padding: 20px;
-        }
+button {
+    padding:9px 15px;
+    border:0;
+    border-radius:7px;
+    cursor:pointer;
+    font-family:Tahoma;
+}
 
-        .box {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 3px 15px rgba(0,0,0,.06);
-        }
+.add {
+    background:#2563eb;
+    color:white;
+}
 
-        .box h2 {
-            margin-top: 0;
-        }
+.edit {
+    background:#f59e0b;
+}
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-        }
+.delete {
+    background:#dc2626;
+    color:white;
+}
 
-        label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: bold;
-        }
+.account {
+    background:#16a34a;
+    color:white;
+}
 
-        input {
-            width: 100%;
-            padding: 11px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-family: Tahoma;
-            font-size: 14px;
-        }
+.logout {
+    background:#dc2626;
+    color:white;
+}
 
-        .submit {
-            margin-top: 20px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
+table {
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
 
-        .cancel {
-            margin-top: 20px;
-            background: #64748b;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            display: none;
-        }
+th,td {
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+th {
+    background:#f8fafc;
+}
 
-        th,
-        td {
-            padding: 12px;
-            border: 1px solid #e2e8f0;
-            text-align: center;
-        }
+</style>
 
-        th {
-            background: #f8fafc;
-        }
-
-        .edit {
-            background: #f59e0b;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin: 2px;
-        }
-
-        .delete {
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin: 2px;
-        }
-
-        .account {
-            background: #16a34a;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin: 2px;
-        }
-
-        .empty {
-            padding: 25px;
-            color: #64748b;
-        }
-
-        #message {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        @media(max-width:600px) {
-
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px;
-            }
-
-            .container {
-                padding: 10px;
-                margin: 15px auto;
-            }
-
-            .box {
-                padding: 15px;
-            }
-
-            table {
-                font-size: 12px;
-            }
-
-            th,
-            td {
-                padding: 8px 4px;
-            }
-        }
-    </style>
 </head>
 
 <body>
 
-<header class="header">
+<header>
 
-    <h1>👥 مدیریت کارکنان</h1>
+<h2>👨‍💼 مدیریت کارکنان</h2>
 
-    <div class="buttons">
+<div>
 
-        <button
-            class="btn back"
-            onclick="location.href='index.html'"
-        >
-            ← داشبورد
-        </button>
+<button onclick="location.href='index.html'">
+← داشبورد
+</button>
 
-        <button
-            class="btn logout"
-            onclick="logout()"
-        >
-            🚪 خروج
-        </button>
+<button
+    class="logout"
+    onclick="logout()"
+>
+خروج
+</button>
 
-    </div>
+</div>
 
 </header>
 
 
 <div class="container">
 
-    <!-- فرم کارمند -->
 
-    <div class="box">
+<div class="box">
 
-        <h2 id="formTitle">
-            ➕ افزودن کارمند
-        </h2>
+<h2>افزودن کارمند</h2>
 
-        <form id="employeeForm">
+<input
+    id="name"
+    placeholder="نام کارمند"
+>
 
-            <div class="form-grid">
+<input
+    id="personnelNumber"
+    placeholder="شماره پرسنلی"
+>
 
-                <div>
+<input
+    id="hourlyRate"
+    type="number"
+    placeholder="حقوق ساعتی"
+>
 
-                    <label>
-                        شماره پرسنلی
-                    </label>
+<input
+    id="username"
+    placeholder="نام کاربری"
+>
 
-                    <input
-                        type="text"
-                        id="personnelNumber"
-                        placeholder="مثلاً 1001"
-                        required
-                    >
+<input
+    id="password"
+    type="password"
+    placeholder="رمز عبور کارمند"
+>
 
-                </div>
+<button
+    class="add"
+    onclick="addEmployee()"
+>
+ثبت کارمند
+</button>
 
+<p>
+اگر نام کاربری و رمز عبور وارد کنید،
+حساب ورود کارمند نیز ساخته می‌شود.
+</p>
 
-                <div>
-
-                    <label>
-                        نام و نام خانوادگی
-                    </label>
-
-                    <input
-                        type="text"
-                        id="employeeName"
-                        placeholder="نام کارمند"
-                        required
-                    >
-
-                </div>
-
-
-                <div>
-
-                    <label>
-                        حقوق ساعتی
-                    </label>
-
-                    <input
-                        type="number"
-                        id="hourlyRate"
-                        placeholder="مثلاً 950000"
-                        min="0"
-                        required
-                    >
-
-                </div>
-
-            </div>
+</div>
 
 
-            <button
-                type="submit"
-                class="submit"
-                id="submitButton"
-            >
-                ثبت کارمند
-            </button>
+<div class="box">
 
+<h2>لیست کارکنان</h2>
 
-            <button
-                type="button"
-                class="cancel"
-                id="cancelButton"
-                onclick="cancelEdit()"
-            >
-                انصراف از ویرایش
-            </button>
+<table>
 
+<thead>
 
-            <p id="message"></p>
+<tr>
 
-        </form>
+<th>نام</th>
+<th>شماره پرسنلی</th>
+<th>حقوق ساعتی</th>
+<th>عملیات</th>
 
-    </div>
+</tr>
 
+</thead>
 
-    <!-- لیست کارکنان -->
+<tbody id="table"></tbody>
 
-    <div class="box">
+</table>
 
-        <h2>
-            📋 لیست کارکنان
-        </h2>
+</div>
 
-
-        <div style="overflow-x:auto;">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            ردیف
-                        </th>
-
-                        <th>
-                            شماره پرسنلی
-                        </th>
-
-                        <th>
-                            نام کارمند
-                        </th>
-
-                        <th>
-                            حقوق ساعتی
-                        </th>
-
-                        <th>
-                            حساب کاربری
-                        </th>
-
-                        <th>
-                            عملیات
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody id="employeesTable">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
 
 </div>
 
 
 <script>
 
-let editingId = null;
-
-
-// =====================================================
-// دریافت کارکنان
-// =====================================================
-
 async function loadEmployees() {
 
-    try {
-
-        const response = await fetch(
-            "/api/employees",
-            {
-                credentials: "same-origin"
-            }
-        );
+    const response =
+        await fetch("/api/employees");
 
 
-        if (response.status === 401) {
+    if(response.status === 403) {
 
-            window.location.href =
-                "/login.html";
+        alert("دسترسی غیرمجاز");
+        location.href="index.html";
+        return;
 
-            return;
-        }
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "خطا در دریافت کارکنان"
-            );
-        }
+    }
 
 
-        const employees =
-            await response.json();
+    const employees =
+        await response.json();
 
 
-        const table =
-            document.getElementById(
-                "employeesTable"
-            );
+    const table =
+        document.getElementById("table");
 
 
-        table.innerHTML = "";
+    table.innerHTML = "";
 
 
-        if (
-            !Array.isArray(employees) ||
-            employees.length === 0
-        ) {
+    employees.forEach(e => {
 
-            table.innerHTML = `
-
-                <tr>
-
-                    <td
-                        colspan="6"
-                        class="empty"
-                    >
-                        هنوز کارمندی ثبت نشده است.
-                    </td>
-
-                </tr>
-
-            `;
-
-            return;
-        }
-
-
-        employees.forEach(
-            (employee, index) => {
-
-                const row =
-                    document.createElement(
-                        "tr"
-                    );
-
-
-                const personnel =
-                    employee.personnel_number ||
-                    "-";
-
-
-                const rate =
-                    Number(
-                        employee.hourly_rate || 0
-                    ).toLocaleString(
-                        "fa-IR"
-                    );
-
-
-                row.innerHTML = `
-
-                    <td>
-                        ${index + 1}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(personnel)}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(employee.name)}
-                    </td>
-
-                    <td>
-                        ${rate}
-                    </td>
-
-                    <td>
-
-                        ${
-                            employee.username
-                                ? `
-                                    <div>${escapeHtml(employee.username)}</div>
-                                    <button
-                                        class="edit"
-                                        onclick="resetPassword(
-                                            ${employee.id},
-                                            '${escapeAttribute(employee.username)}'
-                                        )"
-                                    >
-                                        🔑 تغییر رمز
-                                    </button>
-                                `
-                                : `
-                                    <button
-                                        class="account"
-                                        onclick="createAccount(
-                                            ${employee.id},
-                                            '${escapeAttribute(employee.name)}'
-                                        )"
-                                    >
-                                        ➕ ایجاد حساب
-                                    </button>
-                                `
-                        }
-
-                    </td>
-
-                    <td>
-
-                        <button
-                            class="edit"
-                            onclick="editEmployee(
-                                ${employee.id}
-                            )"
-                        >
-                            ✏️ ویرایش
-                        </button>
-
-                        <button
-                            class="delete"
-                            onclick="deleteEmployee(
-                                ${employee.id}
-                            )"
-                        >
-                            🗑 حذف
-                        </button>
-
-                    </td>
-
-                `;
-
-
-                table.appendChild(row);
-
-            }
-        );
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        document.getElementById(
-            "employeesTable"
-        ).innerHTML = `
+        table.innerHTML += `
 
             <tr>
 
-                <td
-                    colspan="6"
-                    class="empty"
-                >
-                    خطا در دریافت لیست کارکنان.
+                <td>
+                    ${escapeHtml(e.name)}
+                </td>
+
+                <td>
+                    ${escapeHtml(e.personnel_number || "-")}
+                </td>
+
+                <td>
+                    ${Number(e.hourly_rate).toLocaleString()}
+                </td>
+
+                <td>
+
+                    <button
+                        class="edit"
+                        onclick="editEmployee(
+                            ${e.id},
+                            '${escapeJs(e.name)}',
+                            ${e.hourly_rate},
+                            '${escapeJs(e.personnel_number || "")}'
+                        )"
+                    >
+                        ✏️ ویرایش
+                    </button>
+
+
+                    <button
+                        class="account"
+                        onclick="createAccount(${e.id})"
+                    >
+                        🔐 ساخت حساب
+                    </button>
+
+
+                    <button
+                        class="delete"
+                        onclick="deleteEmployee(${e.id})"
+                    >
+                        🗑 حذف
+                    </button>
+
                 </td>
 
             </tr>
 
         `;
-    }
+
+    });
+
 }
 
 
-// =====================================================
-// ثبت یا ویرایش کارمند
-// =====================================================
+async function addEmployee() {
 
-document
-    .getElementById("employeeForm")
-    .addEventListener(
-        "submit",
-        async function(event) {
+    const name =
+        document.getElementById("name").value.trim();
 
-            event.preventDefault();
+    const personnelNumber =
+        document
+            .getElementById("personnelNumber")
+            .value.trim();
 
+    const hourlyRate =
+        Number(
+            document
+                .getElementById("hourlyRate")
+                .value
+        );
 
-            const personnelNumber =
-                document.getElementById(
-                    "personnelNumber"
-                ).value.trim();
+    const username =
+        document
+            .getElementById("username")
+            .value.trim();
 
-
-            const name =
-                document.getElementById(
-                    "employeeName"
-                ).value.trim();
-
-
-            const hourlyRate =
-                Number(
-                    document.getElementById(
-                        "hourlyRate"
-                    ).value
-                );
+    const password =
+        document
+            .getElementById("password")
+            .value;
 
 
-            if (
-                !personnelNumber ||
-                !name ||
-                !hourlyRate
-            ) {
+    if(!name || !hourlyRate) {
 
-                showMessage(
-                    "شماره پرسنلی، نام و حقوق ساعتی را وارد کنید."
-                );
+        alert(
+            "نام و حقوق ساعتی الزامی است."
+        );
 
-                return;
+        return;
+
+    }
+
+
+    const response =
+        await fetch(
+            "/api/employees",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+
+                    name,
+                    hourlyRate,
+                    personnelNumber,
+
+                    username:
+                        username || undefined,
+
+                    password:
+                        password || undefined
+
+                })
+
             }
+        );
 
 
-            try {
-
-                let response;
-
-
-                if (editingId === null) {
-
-                    response =
-                        await fetch(
-                            "/api/employees",
-                            {
-                                method: "POST",
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                credentials:
-                                    "same-origin",
-
-                                body:
-                                    JSON.stringify({
-
-                                        personnelNumber,
-
-                                        name,
-
-                                        hourlyRate
-
-                                    })
-                            }
-                        );
-
-                } else {
-
-                    response =
-                        await fetch(
-                            `/api/employees/${editingId}`,
-                            {
-                                method: "PUT",
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                credentials:
-                                    "same-origin",
-
-                                body:
-                                    JSON.stringify({
-
-                                        personnelNumber,
-
-                                        name,
-
-                                        hourlyRate
-
-                                    })
-                            }
-                        );
-
-                }
+    const result =
+        await response.json();
 
 
-                if (
-                    response.status === 401
-                ) {
-
-                    window.location.href =
-                        "/login.html";
-
-                    return;
-                }
+    alert(result.message);
 
 
-                const result =
-                    await response.json();
+    if(response.ok) {
+
+        document
+            .getElementById("name")
+            .value = "";
+
+        document
+            .getElementById("personnelNumber")
+            .value = "";
+
+        document
+            .getElementById("hourlyRate")
+            .value = "";
+
+        document
+            .getElementById("username")
+            .value = "";
+
+        document
+            .getElementById("password")
+            .value = "";
+
+        loadEmployees();
+
+    }
+
+}
 
 
-                showMessage(
-                    result.message ||
-                    "عملیات انجام شد."
-                );
+async function createAccount(id) {
+
+    const username =
+        prompt("نام کاربری کارمند:");
+
+    if(!username) return;
 
 
-                if (response.ok) {
+    const password =
+        prompt("رمز عبور کارمند:");
 
-                    resetForm();
-
-                    loadEmployees();
-
-                }
+    if(!password) return;
 
 
-            } catch (error) {
+    const response =
+        await fetch(
+            `/api/employees/${id}/account`,
+            {
+                method:"POST",
 
-                console.error(error);
+                headers:{
+                    "Content-Type":"application/json"
+                },
 
-                showMessage(
-                    "خطا در ارتباط با سرور."
-                );
+                body:JSON.stringify({
+                    username,
+                    password
+                })
+
             }
+        );
+
+
+    const result =
+        await response.json();
+
+
+    alert(result.message);
+
+}
+
+
+async function editEmployee(
+    id,
+    name,
+    rate,
+    personnelNumber
+) {
+
+    const newName =
+        prompt("نام جدید:",name);
+
+    if(!newName) return;
+
+
+    const newRate =
+        prompt("حقوق ساعتی جدید:",rate);
+
+    if(!newRate) return;
+
+
+    const newPersonnel =
+        prompt(
+            "شماره پرسنلی:",
+            personnelNumber
+        );
+
+
+    await fetch(
+        `/api/employees/${id}`,
+        {
+            method:"PUT",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                name:newName,
+
+                hourlyRate:
+                    Number(newRate),
+
+                overtimeRate:1.4,
+
+                personnelNumber:
+                    newPersonnel
+
+            })
 
         }
     );
 
 
-// =====================================================
-// شروع ویرایش
-// =====================================================
+    loadEmployees();
 
-async function editEmployee(id) {
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/employees",
-                {
-                    credentials:
-                        "same-origin"
-                }
-            );
-
-
-        if (response.status === 401) {
-
-            window.location.href =
-                "/login.html";
-
-            return;
-        }
-
-
-        const employees =
-            await response.json();
-
-
-        const employee =
-            employees.find(
-                item =>
-                    Number(item.id) === Number(id)
-            );
-
-
-        if (!employee) {
-
-            alert(
-                "کارمند پیدا نشد."
-            );
-
-            return;
-        }
-
-
-        editingId =
-            employee.id;
-
-
-        document.getElementById(
-            "personnelNumber"
-        ).value =
-            employee.personnel_number || "";
-
-
-        document.getElementById(
-            "employeeName"
-        ).value =
-            employee.name;
-
-
-        document.getElementById(
-            "hourlyRate"
-        ).value =
-            employee.hourly_rate;
-
-
-        document.getElementById(
-            "formTitle"
-        ).textContent =
-            "✏️ ویرایش کارمند";
-
-
-        document.getElementById(
-            "submitButton"
-        ).textContent =
-            "ذخیره تغییرات";
-
-
-        document.getElementById(
-            "cancelButton"
-        ).style.display =
-            "inline-block";
-
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "خطا در دریافت اطلاعات کارمند."
-        );
-    }
 }
 
-
-// =====================================================
-// ایجاد حساب کاربری برای راننده
-// =====================================================
-
-async function createAccount(id, employeeName) {
-
-    const username =
-        prompt(
-            `نام کاربری برای «${employeeName}» را وارد کنید:`
-        );
-
-    if (!username || !username.trim()) {
-        return;
-    }
-
-
-    const password =
-        prompt(
-            `رمز عبور برای «${employeeName}» را وارد کنید:`
-        );
-
-    if (!password || !password.trim()) {
-        return;
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                `/api/employees/${id}/account`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    credentials:
-                        "same-origin",
-
-                    body:
-                        JSON.stringify({
-                            username: username.trim(),
-                            password: password.trim()
-                        })
-                }
-            );
-
-
-        if (response.status === 401) {
-
-            window.location.href =
-                "/login.html";
-
-            return;
-        }
-
-
-        const result =
-            await response.json();
-
-
-        alert(
-            result.message ||
-            "عملیات انجام شد."
-        );
-
-
-        if (response.ok) {
-            loadEmployees();
-        }
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "خطا در ارتباط با سرور."
-        );
-    }
-}
-
-
-// =====================================================
-// تغییر رمز عبور حساب راننده
-// =====================================================
-
-async function resetPassword(id, username) {
-
-    const password =
-        prompt(
-            `رمز عبور جدید برای «${username}» را وارد کنید:`
-        );
-
-    if (!password || !password.trim()) {
-        return;
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                `/api/employees/${id}/account`,
-                {
-                    method: "PUT",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    credentials:
-                        "same-origin",
-
-                    body:
-                        JSON.stringify({
-                            password: password.trim()
-                        })
-                }
-            );
-
-
-        if (response.status === 401) {
-
-            window.location.href =
-                "/login.html";
-
-            return;
-        }
-
-
-        const result =
-            await response.json();
-
-
-        alert(
-            result.message ||
-            "عملیات انجام شد."
-        );
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "خطا در ارتباط با سرور."
-        );
-    }
-}
-
-
-// =====================================================
-// حذف کارمند
-// =====================================================
 
 async function deleteEmployee(id) {
 
-    const confirmed =
-        confirm(
-            "آیا از حذف این کارمند مطمئن هستید؟"
-        );
+    if(!confirm(
+        "آیا از حذف کارمند مطمئن هستید؟"
+    )) return;
 
 
-    if (!confirmed) {
-        return;
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                `/api/employees/${id}`,
-                {
-                    method: "DELETE",
-
-                    credentials:
-                        "same-origin"
-                }
-            );
-
-
-        if (response.status === 401) {
-
-            window.location.href =
-                "/login.html";
-
-            return;
+    await fetch(
+        `/api/employees/${id}`,
+        {
+            method:"DELETE"
         }
+    );
 
 
-        const result =
-            await response.json();
-
-
-        alert(
-            result.message ||
-            "کارمند حذف شد."
-        );
-
-
-        if (response.ok) {
-
-            loadEmployees();
-
-        }
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "خطا در حذف کارمند."
-        );
-    }
-}
-
-
-// =====================================================
-// لغو ویرایش
-// =====================================================
-
-function cancelEdit() {
-
-    resetForm();
+    loadEmployees();
 
 }
 
 
-// =====================================================
-// پاک کردن فرم
-// =====================================================
+function escapeHtml(text) {
 
-function resetForm() {
+    return String(text)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;");
 
-    editingId = null;
-
-
-    document
-        .getElementById(
-            "employeeForm"
-        )
-        .reset();
-
-
-    document.getElementById(
-        "formTitle"
-    ).textContent =
-        "➕ افزودن کارمند";
-
-
-    document.getElementById(
-        "submitButton"
-    ).textContent =
-        "ثبت کارمند";
-
-
-    document.getElementById(
-        "cancelButton"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "message"
-    ).textContent =
-        "";
 }
 
 
-// =====================================================
-// پیام
-// =====================================================
+function escapeJs(text) {
 
-function showMessage(message) {
+    return String(text)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'");
 
-    document.getElementById(
-        "message"
-    ).textContent =
-        message;
 }
 
-
-// =====================================================
-// جلوگیری از ورود HTML ناخواسته
-// =====================================================
-
-function escapeHtml(value) {
-
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
-
-
-function escapeAttribute(value) {
-
-    return String(value)
-        .replaceAll("\\", "\\\\")
-        .replaceAll("'", "\\'");
-}
-
-
-// =====================================================
-// خروج
-// =====================================================
 
 async function logout() {
 
-    try {
+    await fetch(
+        "/api/logout",
+        {method:"POST"}
+    );
 
-        await fetch(
-            "/api/logout",
-            {
-                method: "POST",
-                credentials:
-                    "same-origin"
-            }
-        );
+    location.href="/login.html";
 
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
-
-    window.location.href =
-        "/login.html";
 }
 
-
-// =====================================================
-// شروع صفحه
-// =====================================================
 
 loadEmployees();
 
