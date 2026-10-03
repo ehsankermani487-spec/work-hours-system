@@ -6,9 +6,27 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const dbPath =
-    process.env.DB_PATH || "work-hours.db";
 
+const express = require("express");
+const Database = require("better-sqlite3");
+const crypto = require("crypto");
+const path = require("path");
+const fs = require("fs");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// مسیر دیتابیس
+const dbPath = path.resolve(
+    process.env.DB_PATH || path.join(__dirname, "work-hours.db")
+);
+
+// ساخت خودکار پوشه دیتابیس در صورت نبودن
+fs.mkdirSync(path.dirname(dbPath), {
+    recursive: true
+});
+
+// اتصال به دیتابیس
 const db = new Database(dbPath);
 
 app.use(express.json({ limit: "5mb" }));
